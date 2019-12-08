@@ -30,7 +30,7 @@
         chartData.datasets.push(chartDataset);
             var ctx = document.getElementById(countChartCanvasID).getContext('2d');
             var myChart = new Chart(ctx, {
-            type: 'bar',
+            type: 'pie',
             data: chartData,
             options: {
                 scales: {

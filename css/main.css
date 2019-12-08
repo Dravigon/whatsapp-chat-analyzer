@@ -41,8 +41,6 @@ html,body{
 .content-container{
     margin-top: 5px;
     width: 90%;
-}
-.canvas-div{
     overflow-y: auto;
 }
 .chart.w-100{
