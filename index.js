@@ -3,11 +3,11 @@
 import wasmInit, {
     add_wasm_by_example_to_string,
     count_user_msg
-}  from "./wasm/hello_world.js";
+}  from "./wasm/chat_analyse.js";
 
 export const runWasm = async (x,y) => {
   // Instantiate our wasm module
-    const helloWorld = await wasmInit("./wasm/hello_world_bg.wasm");
+    const helloWorld = await wasmInit("./wasm/chat_analyse_bg.wasm");
 
   // Call the Add function export from wasm, save the result
     const addResult = helloWorld.add(x, y);
@@ -23,7 +23,7 @@ export const runWasm = async (x,y) => {
   
 };
 export const messageCount = async(message) => {
-    const initWasm = await wasmInit("./wasm/hello_world_bg.wasm");
+    const initWasm = await wasmInit("./wasm/chat_analyse_bg.wasm");
     const msgCount = count_user_msg(message);
     return JSON.parse(msgCount);
 }
