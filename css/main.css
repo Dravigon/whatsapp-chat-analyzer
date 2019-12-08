@@ -1,4 +1,7 @@
+@import url('https://fonts.googleapis.com/css?family=Caveat|Shadows+Into+Light&display=swap');
 html,body{
+    width: 100%;
+
     border: 0;
     margin: 0;
     padding: 0;
@@ -10,6 +13,30 @@ html,body{
     height: 100%;
     overflow: hidden;
     background-color: rgba(0, 255, 150, 0.8);
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    text-align: center;
+}
+.title{
+    width: 70%;
+    background-color: rgba(0, 0, 0,0.6);
+    font-family: 'Caveat';
+    font-size: 20px;
+    color: greenyellow;
+    margin-top:13px;
+}
+.title p:first-child{
+    font-family: 'Shadows Into Light', cursive;
+    text-transform: capitalize;
+    color: #ffffff;
+    font-size: 36px;
+    font-weight: 600;
+    margin: 13px;
+}
+.content-container{
+    margin-top: 5px;
+    width: 90%;
 }
 .canvas-div{
     overflow-y: auto;
@@ -19,6 +46,11 @@ html,body{
 }
 .chart.w-50{
     width: 50%!important;
+}
+@media only screen and (max-width: 600px) {
+    .chart.w-50{
+        width: 100%!important;
+    }
 }
 .chart .w-25{
     width: 25%;
