@@ -26,6 +26,10 @@ html,body{
     color: greenyellow;
     margin-top:13px;
 }
+.title a{
+    color: white;
+    text-decoration: none;
+}
 .title p:first-child{
     font-family: 'Shadows Into Light', cursive;
     text-transform: capitalize;
