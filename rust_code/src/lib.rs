@@ -92,16 +92,19 @@ pub fn count_words(msg: String,pronoun:String)->String{
     }
     let mut word_frequency_list:Vec<Entry> = vec![];
     let margin = total_count*0.001;
+    let average_frequency:f32=0.0;
     for (word_key,count) in word_count.iter(){
         if count<&margin{
             continue
         }
-        let freq:f32 = (count/total_count)*100.0;
+        let freq:f32 = (count/total_count);
+        average_frequency = freq+average_frequency;
         let word = word_key.to_string();
 
         word_frequency_list.push(Entry::new(word,freq));
     }
-    println!("{}","{ \"word\": \"That\\\'s\", \"freq\": 0.65789473 }".replace("\\\\", ""));
+    average_frequency=average_frequency/total_count;
+    let multiplier = 1/average_frequency;
     let result = format!("{:?}",word_frequency_list).replace("Entry","").replace("word:","\"word\":").replace("freq:","\"freq\":");
     return result.replace("\\\'", "`").replace("\\u","u");
 }

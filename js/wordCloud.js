@@ -61,7 +61,9 @@ function createWordObject(word, freq) {
     wordContainer.style.position = "absolute";
     wordContainer.style.fontSize = freq + "em";
     wordContainer.style.lineHeight = config.lineHeight;
+    wordContainer.style.cursor = "crosshair";
 /*    wordContainer.style.transform = "translateX(-50%) translateY(-50%)";*/
+    wordContainer.title=word;
     wordContainer.appendChild(document.createTextNode(word));
 
     return wordContainer;
