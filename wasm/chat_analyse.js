@@ -107,6 +107,20 @@ export function count_user_msg(msg) {
     return v0;
 }
 
+/**
+* @param {string} msg
+* @param {string} pronoun
+* @returns {string}
+*/
+export function count_words(msg, pronoun) {
+    const retptr = 8;
+    const ret = wasm.count_words(retptr, passStringToWasm(msg), WASM_VECTOR_LEN, passStringToWasm(pronoun), WASM_VECTOR_LEN);
+    const memi32 = getInt32Memory();
+    const v0 = getStringFromWasm(memi32[retptr / 4 + 0], memi32[retptr / 4 + 1]).slice();
+    wasm.__wbindgen_free(memi32[retptr / 4 + 0], memi32[retptr / 4 + 1] * 1);
+    return v0;
+}
+
 function init(module) {
     if (typeof module === 'undefined') {
         module = import.meta.url.replace(/\.js$/, '_bg.wasm');

@@ -46,3 +46,62 @@ pub fn count_user_msg(msg: String)->String{
   let result = format!("{:?}", total_count);
   return result.into();
 }
+#[wasm_bindgen]
+pub fn count_words(msg: String,pronoun:String)->String{
+    #[derive( Debug)]
+    struct Entry {
+        word: String,
+        freq: f32,
+    }
+    impl Entry {
+    fn new(x: String, y: f32) -> Entry {
+        Entry { word:x, freq:y }
+    }
+}
+    let mut word_count:HashMap<&str, f32> = HashMap::new();
+    let mut total_count:f32 = 0.0;
+    let para_list: Vec<&str> = msg.split("\n").collect();
+    let pronoun_list:Vec<&str>=pronoun.split(",").collect();
+    let reverse_regex = Regex::new("(security code changed. Tap for more info|Messages to this chat and calls are now secured with end|<Media).*$").unwrap();
+    for induvidual_para in para_list{
+        if reverse_regex.is_match(induvidual_para){
+            continue
+        }
+        let mut para:&str=induvidual_para;
+        let re = Regex::new(r"^\d{2}/\d{2}/\d{2}, \d{2}:\d{2}.*$").unwrap();
+
+        if re.is_match(para){
+            let tmp:Vec<&str> = para.splitn(3,":").collect();
+            para=&tmp[2];
+        }
+        let word_list:Vec<&str> = para.split(" ").collect();
+        for word in word_list{
+                let word_lower = word.to_lowercase();
+                match !pronoun_list.contains(&word_lower.as_str()){
+                    true=>{
+                            total_count = total_count+1.0;
+                            if word_count.contains_key(word){
+                                  word_count.insert(word,word_count.get(word).unwrap()+1.0);
+                            }else{
+                                    word_count.insert(word,1.0);
+                            }
+                        },
+                    false=>{},
+                }
+            }
+    }
+    let mut word_frequency_list:Vec<Entry> = vec![];
+    let margin = total_count*0.001;
+    for (word_key,count) in word_count.iter(){
+        if count<&margin{
+            continue
+        }
+        let freq:f32 = (count/total_count)*100.0;
+        let word = word_key.to_string();
+
+        word_frequency_list.push(Entry::new(word,freq));
+    }
+    println!("{}","{ \"word\": \"That\\\'s\", \"freq\": 0.65789473 }".replace("\\\\", ""));
+    let result = format!("{:?}",word_frequency_list).replace("Entry","").replace("word:","\"word\":").replace("freq:","\"freq\":");
+    return result.replace("\\\'", "`").replace("\\u","u");
+}

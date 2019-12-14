@@ -1,15 +1,17 @@
 
-import {runWasm, messageCount} from '../index.js' 
+import {runWasm, messageCount,wordCount} from '../index.js' 
+import {drawWordCloud} from './wordCloud.js'
 
 //runWasm(1,2).then(function(e){
 //    console.log(e);
 //})
-function createButton(buttonText,clickCallback){
+function createButton(buttonText,clickCallback,containerType,size){
     //create canvas
-    var genericCanvas = document.createElement("canvas");
+    var genericCanvas = document.createElement(containerType||"canvas");
     genericCanvas.id=buttonText.toLowerCase().replace(" ","-");
+    genericCanvas.style.width="100%";
     var genericCanvasContainer = document.createElement("div");
-    genericCanvasContainer.className="chart w-50";
+    genericCanvasContainer.className="chart w-"+(size||50);
     genericCanvasContainer.appendChild(genericCanvas);
     document.getElementById("canvas-div").appendChild(genericCanvasContainer);
 
@@ -29,13 +31,22 @@ function handleFileSelect(evt) {
           if (evt.target.readyState == FileReader.DONE) { // DONE == 2
               var data=evt.target.result;
 
-              createButton("Convo Count",function(){
+              createButton("Conversation distribution",function(){
+                  document.getElementById("conversation-distribution").innerHTML="loading....";
                     messageCount(data).then(function(e){
                           (function(chart){
-                              chart.countChart("convo-count",e);
+                              document.getElementById("conversation-distribution").innerHTML="";
+                              chart.countChart("conversation-distribution",e);
                           })(whatsappChart);
                     })
               });
+              createButton("Word Usage",function(){
+                    document.getElementById("word-usage").innerHTML="<div class=\"lds-roller\"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>";
+                    wordCount(data).then(function(e){
+                        document.getElementById("word-usage").innerHTML="";
+                        drawWordCloud("word-usage",e);
+                    })
+              },"div");
           }
       };
       reader.readAsText(f);
