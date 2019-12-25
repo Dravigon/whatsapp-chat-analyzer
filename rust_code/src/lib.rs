@@ -1,4 +1,6 @@
 use regex::Regex;
+use std::cmp::Ordering;
+
 use std::collections::HashMap;
 // The wasm-pack uses wasm-bindgen to build and generate JavaScript binding file.
 // Import the wasm-bindgen crate. 
@@ -54,12 +56,15 @@ pub fn count_words(msg: String,pronoun:String)->String{
         freq: f32,
     }
     impl Entry {
-    fn new(x: String, y: f32) -> Entry {
-        Entry { word:x, freq:y }
+        fn new(x: String, y: f32) -> Entry {
+            Entry { word:x, freq:y }
+        }
     }
-}
+
     let mut word_count:HashMap<&str, f32> = HashMap::new();
+    let mut max_count:f32 = 1.0;
     let mut total_count:f32 = 0.0;
+    let mut unique_word_count:f32 = 0.0;
     let para_list: Vec<&str> = msg.split("\n").collect();
     let pronoun_list:Vec<&str>=pronoun.split(",").collect();
     let reverse_regex = Regex::new("(security code changed. Tap for more info|Messages to this chat and calls are now secured with end|<Media).*$").unwrap();
@@ -76,14 +81,23 @@ pub fn count_words(msg: String,pronoun:String)->String{
         }
         let word_list:Vec<&str> = para.split(" ").collect();
         for word in word_list{
+            //ignore whitespaces and one letter words
+                if word.trim().len()<2{
+                    continue;
+                }
                 let word_lower = word.to_lowercase();
                 match !pronoun_list.contains(&word_lower.as_str()){
                     true=>{
                             total_count = total_count+1.0;
                             if word_count.contains_key(word){
-                                  word_count.insert(word,word_count.get(word).unwrap()+1.0);
+                                  let current_count = *word_count.get(word).unwrap();
+                                  if current_count>max_count{
+                                      max_count=current_count;
+                                  }
+                                  word_count.insert(word,current_count+1.0);
                             }else{
                                     word_count.insert(word,1.0);
+                                    unique_word_count=unique_word_count+1.0;
                             }
                         },
                     false=>{},
@@ -91,20 +105,19 @@ pub fn count_words(msg: String,pronoun:String)->String{
             }
     }
     let mut word_frequency_list:Vec<Entry> = vec![];
-    let margin = total_count*0.001;
-    let average_frequency:f32=0.0;
+    let margin = (max_count+total_count/unique_word_count)*max_count/total_count;
+
     for (word_key,count) in word_count.iter(){
         if count<&margin{
             continue
         }
-        let freq:f32 = (count/total_count);
-        average_frequency = freq+average_frequency;
+        let freq:f32 = (count - margin)/(max_count - margin);
         let word = word_key.to_string();
 
         word_frequency_list.push(Entry::new(word,freq));
     }
-    average_frequency=average_frequency/total_count;
-    let multiplier = 1/average_frequency;
+    word_frequency_list.sort_by(|a, b| b.freq.partial_cmp(&a.freq).unwrap_or(Ordering::Equal));
+    word_frequency_list.truncate(25);
     let result = format!("{:?}",word_frequency_list).replace("Entry","").replace("word:","\"word\":").replace("freq:","\"freq\":");
     return result.replace("\\\'", "`").replace("\\u","u");
 }

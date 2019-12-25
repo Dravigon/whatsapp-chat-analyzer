@@ -1,6 +1,6 @@
 //copied from https://codepen.io/stevn/pen/JdwNgw
 
-export const drawWordCloud = (divId,words,config) =>{
+export const drawWordCloud = (divId,wordList,config) =>{
 /*  ======================= SETUP ======================= */
 var config = config || {
     trace: true,
@@ -12,16 +12,18 @@ var config = config || {
     font: "sans-serif"
 }
 
-var words = words || ["words", "are", "cool", "and", "so", "are", "you", "inconstituent", "funhouse!", "apart", "from", "Steve", "fish"].map(function(word) {
+
+var words = wordList || ["words", "are", "cool", "and", "so", "are", "you", "inconstituent", "funhouse!", "apart", "from", "Steve", "fish"].map(function(word) {
     return {
         word: word,
         freq: Math.floor(Math.random() * 50) + 10
     }
-})
+});
 
 words.sort(function(a, b) {
     return -1 * (a.freq - b.freq);
 });
+
 
 var cloud = document.createElement("div");
 cloud.style.position = "relative";
@@ -30,7 +32,7 @@ cloud.style.fontFamily = config.font;
 cloud.style.height="50vh";
 cloud.style.width="100%";
 cloud.style.margin=" 0 auto";
-cloud.style.fontSize="49px";
+cloud.style.fontSize="45px";
 
 var traceCanvas = document.createElement("canvas");
 traceCanvas.width = cloud.offsetWidth;
@@ -49,8 +51,10 @@ var startPoint = {
 };
 
 var wordsDown = [];
-/* ======================= END SETUP ======================= */
 
+
+
+/* ======================= END SETUP ======================= */
 
 
 
