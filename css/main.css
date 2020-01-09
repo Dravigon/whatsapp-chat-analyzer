@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Caveat|Shadows+Into+Light&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Lobster+Two|Open+Sans&display=swap');
 html,body{
     width: 100%;
 
@@ -21,7 +21,7 @@ html,body{
 .title{
     width: 70%;
     background-color: rgba(0, 0, 0,0.3);
-    font-family: 'Caveat';
+    font-family: 'Open Sans', sans-serif;
     font-size: 20px;
     color: greenyellow;
     margin-top:13px;
@@ -35,7 +35,7 @@ html,body{
     text-decoration: none;
 }
 .title p:first-child{
-    font-family: 'Shadows Into Light', cursive;
+    font-family: 'Lobster Two', cursive;
     text-transform: capitalize;
     color: #ffffff;
     font-size: 36px;
