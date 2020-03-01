@@ -1,4 +1,7 @@
 use regex::Regex;
+use chrono::{Datelike, NaiveDateTime, Timelike};
+use std::convert::TryInto;
+use std::fmt::Write;
 use std::cmp::Ordering;
 
 use std::collections::HashMap;
@@ -120,4 +123,31 @@ pub fn count_words(msg: String,pronoun:String)->String{
     word_frequency_list.truncate(25);
     let result = format!("{:?}",word_frequency_list).replace("Entry","").replace("word:","\"word\":").replace("freq:","\"freq\":");
     return result.replace("\\\'", "`").replace("\\u","u");
+}
+
+#[wasm_bindgen]
+pub fn generate_heat_map_data(chat_data:String)->String{
+    let mut values:HashMap<String, Vec<i32>> = HashMap::new();
+    let para_list: Vec<&str> = chat_data.split("\n").collect();
+    let re = Regex::new(r"^\d{2}/\d{2}/\d{2}, \d{2}:\d{2}.*$").unwrap(); 
+    for induvidual_para in para_list{
+        if re.is_match(induvidual_para){
+                let para: Vec<&str> = induvidual_para.split(" - ").collect();
+                let no_timezone = NaiveDateTime::parse_from_str(para[0].trim(), "%d/%m/%Y, %H:%M").unwrap();
+                let mut week_day =String::new();
+                write!(week_day,"{:?}",no_timezone.weekday());//must hadle error but nah
+                if values.contains_key(&week_day){
+                    let mut vec:Vec<i32> = values.get_mut(&week_day).unwrap().to_vec();
+                    let hour:usize = no_timezone.hour().try_into().unwrap(); 
+                    vec[hour]=vec[hour]+1;
+                    values.insert(week_day,vec);
+                }else{
+                    let mut vec:Vec<i32> = vec![0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];                    
+                    let hour:usize = no_timezone.hour().try_into().unwrap(); 
+                    vec[hour]=1;
+                    values.insert(week_day,vec);
+                }
+        }
+    }
+    format!("{:?}",values)
 }
