@@ -15,27 +15,39 @@ import {
 //})
 function createButton(buttonText, clickCallback, containerType, size, canvasSize) {
     //create canvas
-    var genericCanvas = document.createElement(containerType || "canvas");
-    genericCanvas.id = buttonText.toLowerCase().replace(" ", "-");
-    genericCanvas.style.width = "100%";
-    if (canvasSize) {
-        genericCanvas.width = canvasSize.width;
-        genericCanvas.height = canvasSize.height;
-    }
 
+        console.log(clickCallback.toString());
     //create Button
-    var genericButton = document.createElement("button");
-    genericButton.textContent = buttonText;
-    genericButton.onclick = function() {
-        var genericCanvasContainer = document.getElementById(genericCanvas.id + "-container") || document.createElement("div");
-        genericCanvasContainer.className = "chart w-" + (size || 50);
-        genericCanvasContainer.id = genericCanvas.id + "-container";
-        genericCanvasContainer.appendChild(genericCanvas);
-        document.getElementById("canvas-div").appendChild(genericCanvasContainer);
-        document.getElementById(genericCanvas.id).innerHTML = "<div class=\"lds-roller\"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>";
-        clickCallback(genericCanvas.id);
+    var canvasComponent = document.createElement("custom-card");
+    canvasComponent.setAttribute("card-text", buttonText);
+    containerType && canvasComponent.setAttribute("container-type", containerType);
+    if (canvasSize) {
+        canvasComponent.setAttribute("canvas-height", canvasSize.height);
+        canvasComponent.setAttribute("canvas-width", canvasSize.width);
     }
-    document.getElementById('whatsapp_content').appendChild(genericButton);
+    canvasComponent.addEventListener("clicked", (evt) => {
+        console.log(evt.detail);
+
+        clickCallback(evt.detail.id);
+    });
+    var genericCanvasContainer = document.createElement("div");
+    genericCanvasContainer.className = "chart w-" + (size || 50);
+    genericCanvasContainer.id = buttonText.toLowerCase().replace(" ", "-") + "-container";
+    genericCanvasContainer.appendChild(canvasComponent);
+    document.getElementById("canvas-div").appendChild(genericCanvasContainer);
+
+    //    document.getElementById('whatsapp_content').appendChild(genericButton);
+}
+
+let removeDescription = function() {
+    let elems = document.getElementsByClassName("description");
+    for (var elem of elems) {
+        const x = elem;
+        x.style.fontSize = 0;
+        setTimeout(function() {
+            x.innerHTML = "";
+        }, 500);
+    }
 }
 
 function handleFileSelect(evt) {
@@ -46,18 +58,21 @@ function handleFileSelect(evt) {
         var reader = new FileReader();
         reader.onloadend = function(evt) {
             if (evt.target.readyState == FileReader.DONE) { // DONE == 2
+                removeDescription();
                 var data = evt.target.result;
 
                 createButton("Conversation distribution", function(canvasId) {
                     messageCount(data).then(function(e) {
                         (function(chart) {
                             chart.countChart(canvasId, e);
+                            document.getElementById("loading-"+canvasId).style.display = 'none'
                         })(whatsappChart);
                     })
                 });
                 createButton("Word Usage", function(canvasId) {
                     wordCount(data).then(function(e) {
                         drawWordCloud(canvasId, e);
+                        document.getElementById("loading-"+canvasId).style.display = 'none'
                     })
                 }, "div");
                 createButton("heat chart",
@@ -65,6 +80,7 @@ function handleFileSelect(evt) {
                         heatMapData(data).then(
                             function(datas) {
                                 drawHeatChart(canvasId, datas);
+                                document.getElementById("loading-"+canvasId).style.display = 'none'
                             }
                         )
                     }, "", "", {

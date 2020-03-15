@@ -1,0 +1,11 @@
+.card{
+    width: 100%;
+}
+.card>button{
+    color: blue;
+    margin: 0
+}
+/*TODO:change logic to center div*/
+.lds-roller{
+    transform: translate(100%,100%);
+}

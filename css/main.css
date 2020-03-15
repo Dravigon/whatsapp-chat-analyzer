@@ -8,6 +8,7 @@ html,body{
     width: 100vw;
     height: 100vh;
 }
+
 .app-container{
     width: 100%;
     height: 100%;
@@ -16,32 +17,42 @@ html,body{
     display: flex;
     flex-flow: column;
     align-items: center;
-    text-align: center;
 }
 .title{
-    width: 70%;
-    background-color: rgba(0, 0, 0,0.3);
+    width:100% ;
     font-family: 'Open Sans', sans-serif;
-    font-size: 20px;
+    font-size: 15px;
     color: greenyellow;
     margin-top:13px;
-    box-shadow: 1px 2px 2px 1px
-    rgba(0,0,0,0.25);
-    border-radius: 100px;
     padding: 10px;
+    display: flex;
+}
+.description{
+    transition: font-size .5s ease-in-out;
 }
 .title a{
     color: white;
     text-decoration: none;
 }
-.title p:first-child{
+.title-text{ 
     font-family: 'Lobster Two', cursive;
     text-transform: capitalize;
     color: #ffffff;
-    font-size: 36px;
+    font-size: 70px;
     font-weight: 600;
     margin: 13px;
+    max-width: 50vw;
 }
+ @media only screen and (max-width: 600px) {
+
+    .title{
+        flex-wrap: wrap;
+    }
+    .title-text{
+        max-width: 100vw;
+        font-size: 3rem;
+    }
+ }
 .content-container{
     margin-top: 5px;
     width: 95%;
@@ -68,12 +79,23 @@ html,body{
 .chart .w-25{
     width: 25%;
 }
-#files{
-    border: 0;
-    background-color: #e8e8e8c7;
+#choose-file-text{
     padding: 10px;
-    margin-top: 5px;
-    box-shadow: 0 2px 3px rgba(0,0,0,0.5);
+    background: red;
+    display: table;
+    color: #fff;
+    width: 80%;
+    box-shadow:1px 5px 25px rgba(0, 0, 0, 0.8);
+    margin: auto;
+    text-align: center;
+}
+#choose-file-text:active{
+    box-shadow:0px 5px 25px rgba(0, 0, 0, 0.8);
+}
+
+#files{
+    display: none;
+    width: 100%;
 }
 #whatsapp_content{
     margin: auto;
@@ -84,7 +106,7 @@ html,body{
     background-color: aquamarine;
     display: flex;
     flex-wrap: wrap;
-    max-width: 100%;
+    width: 100%;
     align-items: center;
     justify-content: center;
 }

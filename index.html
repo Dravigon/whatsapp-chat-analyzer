@@ -5,19 +5,25 @@
       <link rel="stylesheet" href="./css/main.css">
       <link rel="stylesheet" href="css/wordCloud.css">
       <link rel="preload" href="./wasm/hello_world.js" type="script">
+      <script src="templates/Card/Card.js"></script>
     </head> 
     <body>
         <div class="app-container">
             <div class="title">
-                <p>WHATSAPP ANALYZER</p>
-                <p>Export the whatsapp chat to a txt file and upload here <a href="https://faq.whatsapp.com/en/wp/22548236" target="_blank">Click here to know more</a></p>
-                <p><b>Note:This does not send the files to any external server for analysis
-                all analysis occurs in browser</b>
-                </p>
+                <p class="title-text">WHATSAPP ANALYZER</p>
+                <div class="title-description">
+                    <p class="description">Export the whatsapp chat to a txt file and upload here <a href="https://faq.whatsapp.com/en/wp/22548236" target="_blank">Click here to know more</a></p>
+                <label >
+                    <span id="choose-file-text">Click here to load a new chat file</span>
+                    <input type="file" id="files" name="files[]"/>
+                </label>
+                    <p class="description"><b>Note:This does not send the files to any external server for analysis
+                    all analysis occurs in browser</b>
+                    </p>
+                <div id="whatsapp_content"></div>
+                </div>
             </div>
             <div class="content-container">
-                <input type="file" id="files" name="files[]" multiple />
-                <div id="whatsapp_content"></div>
                 <div id="canvas-div"> </div>
             </div>
             <div id="footer">
