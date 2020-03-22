@@ -14,15 +14,19 @@ class Card extends HTMLElement {
         this.containerType = this.getAttribute("container-type") || "canvas";
         this.canvasHeight = this.getAttribute("canvas-height");
         this.canvasWidth = this.getAttribute("canvas-width");
+        this.backGroundImage = this.getAttribute("background-image-url")|| "none";
+        this.title = this.getAttribute("card-text")||"";
+        this.contentText = this.getAttribute("card-description")||"";
         this.innerHTML = `
         <style>
             @import "templates/Card/Card.css";
         </style>
-        <div id="${this.containerId}" class="card">
-          Hello, World!
+        <div id="${this.containerId}" class="card"  style="background-image:${this.backGroundImage}">
+            <h1>${this.title}</h1>
+            <p>${this.contentText}</p>
           </div>`;
         var button = document.createElement("button");
-        button.textContent = "Click me";
+        button.textContent = "Analyse";
         button.onclick = (evt) => {
             document.getElementById(this.containerId).innerHTML = `<div id='loading-${this.canvasId}' class="lds-roller">
                 <div></div>
