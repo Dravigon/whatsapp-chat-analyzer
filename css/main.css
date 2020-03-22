@@ -56,7 +56,7 @@ html,body{
  }
 .content-container{
     margin-top: 5px;
-    width: 95%;
+    width: 100%;
     height: 70%;
     overflow-y: auto;
     height:inherit ;
@@ -72,7 +72,8 @@ html,body{
     width: 100%!important;
 }
 .chart.w-50{
-    width: 50%!important;
+    width: calc(50% - 10px)!important;
+    margin: 5px;
 }
 @media only screen and (max-width: 600px) {
     .chart.w-50{
@@ -87,7 +88,6 @@ html,body{
     background: #40b30b9c;
     display: table;
     color: #fff;
-    width: 80%;
     box-shadow:1px 5px 25px rgba(0, 0, 0, 0.8);
     margin: auto;
     text-align: center;

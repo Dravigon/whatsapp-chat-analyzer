@@ -26,8 +26,6 @@ function createButton(buttonText, clickCallback, containerType, size, canvasSize
         canvasComponent.setAttribute("canvas-width", canvasSize.width);
     }
     canvasComponent.addEventListener("clicked", (evt) => {
-        console.log(evt.detail);
-
         clickCallback(evt.detail.id);
     });
     var genericCanvasContainer = document.createElement("div");
@@ -35,8 +33,6 @@ function createButton(buttonText, clickCallback, containerType, size, canvasSize
     genericCanvasContainer.id = buttonText.toLowerCase().replace(" ", "-") + "-container";
     genericCanvasContainer.appendChild(canvasComponent);
     document.getElementById("canvas-div").appendChild(genericCanvasContainer);
-
-    //    document.getElementById('whatsapp_content').appendChild(genericButton);
 }
 
 let removeDescription = function() {

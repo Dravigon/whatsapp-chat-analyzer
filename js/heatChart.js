@@ -1,8 +1,8 @@
 function getColourList(maxVal, minVal) {
-  let green = 255; //i.e. FF
-  let red = 0;
-  let stepSize = 510 / (maxVal - minVal); //how many colors do you want?
-  let colourArray = [];
+  var green = 255; //i.e. FF
+  var red = 0;
+  var stepSize = 510 / (maxVal - minVal); //how many colors do you want?
+  var colourArray = [];
   while (red < 255) {
     red += stepSize;
     if (red > 255) {
@@ -24,6 +24,58 @@ function getColourList(maxVal, minVal) {
     minVal: minVal
   };
 }
+function drawLegends(
+  canvas,
+  xPadding,
+  size,
+  xOrigin,
+  xStepSize,
+  yStepSize,
+  spacing,
+  colourDetails,
+  minValue,
+  maxValue,
+  xSize
+) {
+  var endX = (xStepSize + spacing) * size + xPadding;
+  var startX = xPadding;
+  var ctx = canvas.getContext("2d");
+
+  var currentPos = (xStepSize + spacing) * xSize - xPadding - xOrigin;
+
+  ctx.fillStyle = "rgb(0, 0, 0)";
+  ctx.textAlign = "center";
+  ctx.save();
+  ctx.translate(100, 300);
+  ctx.rotate(-0.5 * Math.PI);
+  ctx.fillText(
+    minValue + " chats",
+    ((xStepSize + spacing) * xSize) / 2 - 20,
+    currentPos - xPadding - xOrigin - 2
+  );
+  ctx.fillText(
+    maxValue + " chats",
+    ((xStepSize + spacing) * xSize) / 2 - 20,
+    currentPos -
+      xPadding -
+      xOrigin +
+      ((size * xStepSize * 0.85) / colourDetails.colourList.length) * maxValue +
+      10
+  );
+  ctx.restore();
+  xStepSize = (size * xStepSize * 0.85) / colourDetails.colourList.length;
+  ctx.fillText(
+    "Legend (Chats per hour)",
+    (maxValue * xStepSize) / 2 + currentPos,
+    10
+  );
+
+  for (var i = minValue; i <= maxValue; i++) {
+    ctx.fillStyle = colourDetails.colourList[i - minValue];
+    ctx.fillRect(currentPos, 20, xStepSize, yStepSize - 20);
+    currentPos += xStepSize;
+  }
+}
 function drawRow(
   canvas,
   xPadding,
@@ -35,12 +87,12 @@ function drawRow(
   yStepSize,
   y
 ) {
-  let ctx = canvas.getContext("2d");
+  var ctx = canvas.getContext("2d");
   ctx.fillStyle = "rgb(200, 0, 0)";
   ctx.textAlign = "center";
   ctx.fillText(rowName, xPadding / 2, y + yStepSize / 2);
-  let currentPos = xPadding;
-  for (let val of values) {
+  var currentPos = xPadding;
+  for (var val of values) {
     ctx.fillStyle = colourDetails.colourList[val - colourDetails.minVal - 1];
     ctx.fillRect(currentPos, y, xStepSize, yStepSize);
     currentPos += xStepSize + spacing;
@@ -48,36 +100,47 @@ function drawRow(
 }
 
 export const drawHeatChart = (canvasId,data) => {
-    console.log(data);
-  let canvas = document.getElementById(canvasId);
-  let values = Object.values(data.values);
-  let keys = Object.keys(data.values);
-  let maxVal = values.reduce(function(accumum, val) {
+  var values = Object.values(data.values);
+  var keys = Object.keys(data.values);
+  var maxVal = values.reduce(function(accumum, val) {
     return Math.max(accumum || Math.max(...val), Math.max(...val));
   }, 0);
-  let minVal = values.reduce(function(accumum, val) {
+  var minVal = values.reduce(function(accumum, val) {
     return Math.min(accumum || 0, Math.min(...val));
   }, 0);
-  let colourDetails = getColourList(maxVal, minVal);
-  let xPadding = 50;
-  let yPadding = 51;
-  let spacing = 3;
-  let stepSize =
-    (canvas.width - xPadding) / values[0].length - spacing;
-  let yStepSize =
+  var colourDetails = getColourList(maxVal, minVal);
+  var canvas = document.getElementById(canvasId);
+  var xPadding = 50;
+  var yPadding = 100;
+  var spacing = 1;
+  var stepSize = (canvas.width - xPadding) / values[0].length - spacing;
+  var yStepSize =
     (canvas.height - yPadding) / keys.length - keys.length * spacing;
-  let currentPos = xPadding + stepSize / 2;
-  for (let val of data.periods) {
+  var currentPos = xPadding + stepSize / 2;
+  drawLegends(
+    canvas,
+    xPadding,
+    keys.length,
+    xPadding,
+    stepSize,
+    yStepSize,
+    spacing,
+    colourDetails,
+    minVal,
+    maxVal,
+    values[0].length
+  );
+  for (var val of data.periods) {
     if (canvas.getContext) {
-      let ctx = canvas.getContext("2d");
+      var ctx = canvas.getContext("2d");
       ctx.fillStyle = "rgb(200, 0, 0)";
       ctx.textAlign = "center";
-      ctx.fillText(val, currentPos, 10);
+      ctx.fillText(val, currentPos, yPadding - 10);
       currentPos += stepSize + spacing;
     }
   }
-  let y = 15;
-  for (let row in data.values) {
+  var y = yPadding;
+  for (var row in data.values) {
     drawRow(
       canvas,
       xPadding,
