@@ -31,7 +31,7 @@ pub fn count_user_msg(msg: String)->String{
     let mut total_count:HashMap<&str, i32> = HashMap::new();
     let v: Vec<&str> = msg.split("\n").collect();
     let reverse_regex = Regex::new("(security code changed. Tap for more info|Messages to this chat and calls are now secured with end).*$").unwrap();
-    let re = Regex::new(r"^\d{2}/\d{2}/\d{2}, \d{2}:\d{2}.*$").unwrap();
+    let re = Regex::new(r"^((\d{2}|\d{1})/(\d{2}|\d{1})/\d{2}, (\d{2}|\d{1}):\d{2}).*$").unwrap();
     for a in v{
          match re.is_match(a)&!reverse_regex.is_match(a){
             true=>{
@@ -76,7 +76,8 @@ pub fn count_words(msg: String,pronoun:String)->String{
             continue
         }
         let mut para:&str=induvidual_para;
-        let re = Regex::new(r"^\d{2}/\d{2}/\d{2}, \d{2}:\d{2}.*$").unwrap();
+
+        let re = Regex::new(r"^((\d{2}|\d{1})/(\d{2}|\d{1})/\d{2}, (\d{2}|\d{1}):\d{2}).*$").unwrap();
 
         if re.is_match(para){
             let tmp:Vec<&str> = para.splitn(3,":").collect();
@@ -124,16 +125,24 @@ pub fn count_words(msg: String,pronoun:String)->String{
     let result = format!("{:?}",word_frequency_list).replace("Entry","").replace("word:","\"word\":").replace("freq:","\"freq\":");
     return result.replace("\\\'", "`").replace("\\u","u");
 }
+//getting dateformat based on am pm
+fn get_format(contains_am_pm:bool)->String{
+    match contains_am_pm{
+        true=>"%m/%d/%Y, %I:%M %p".to_string(),
+        false=>"%d/%m/%Y, %H:%M".to_string()
+    }
+}
 
 #[wasm_bindgen]
 pub fn generate_heat_map_data(chat_data:String)->String{
     let mut values:HashMap<String, Vec<i32>> = HashMap::new();
     let para_list: Vec<&str> = chat_data.split("\n").collect();
-    let re = Regex::new(r"^\d{2}/\d{2}/\d{2}, \d{2}:\d{2}.*$").unwrap(); 
+    let re = Regex::new(r"^((\d{2}|\d{1})/(\d{2}|\d{1})/\d{2}, (\d{2}|\d{1}):\d{2}).*$").unwrap();
     for induvidual_para in para_list{
         if re.is_match(induvidual_para){
                 let para: Vec<&str> = induvidual_para.split(" - ").collect();
-                let no_timezone = NaiveDateTime::parse_from_str(para[0].trim(), "%d/%m/%Y, %H:%M").unwrap();
+                let contains_am_pm:bool = para[0].trim().contains("PM")||para[0].trim().contains("AM");
+                let no_timezone = NaiveDateTime::parse_from_str(para[0].trim(), &get_format(contains_am_pm)).unwrap();
                 let mut week_day =String::new();
                 write!(week_day,"{:?}",no_timezone.weekday());//must hadle error but nah
                 if values.contains_key(&week_day){
