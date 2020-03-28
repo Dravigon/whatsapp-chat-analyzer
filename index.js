@@ -4,7 +4,8 @@ import wasmInit, {
     add_wasm_by_example_to_string,
     count_user_msg,
     count_words,
-    generate_heat_map_data
+    generate_heat_map_data,
+    generate_chat_history_data
 } from "./wasm/chat_analyse.js";
 
 export const runWasm = async (x, y) => {
@@ -46,3 +47,10 @@ export const heatMapData = async (message) => {
         values: heatMap
     };
 }
+export const chatBehaviourHistory = async (message) => {
+    const initWasm = await wasmInit("./wasm/chat_analyse_bg.wasm");
+    const chatBehaviourHistory = generate_chat_history_data(message);
+    console.log(chatBehaviourHistory);
+    return JSON.parse(chatBehaviourHistory);
+}
+

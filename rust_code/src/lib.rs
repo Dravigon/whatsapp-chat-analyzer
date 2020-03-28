@@ -160,3 +160,85 @@ pub fn generate_heat_map_data(chat_data:String)->String{
     }
     format!("{:?}",values)
 }
+#[wasm_bindgen]
+pub fn generate_chat_history_data(chat_data:String)->String{
+    let mut values:HashMap<String, Vec<i32>> = HashMap::new();
+    let mut labels:Vec<String> = Vec::new();
+    let para_list: Vec<&str> = chat_data.split("\n").collect();
+    let re = Regex::new(r"^((\d{2}|\d{1})/(\d{2}|\d{1})/\d{2}, (\d{2}|\d{1}):\d{2}).*$").unwrap(); 
+    let reverse_regex = Regex::new("(security code changed. Tap for more info|Messages to this chat and calls are now secured with end).*$").unwrap();
+
+    for induvidual_para in para_list{
+        if re.is_match(induvidual_para)&!reverse_regex.is_match(induvidual_para){
+                let v: Vec<&str> = induvidual_para.splitn(4, |c| c == '-' || c == ':').collect();                                              
+                let name = v[2].trim();      
+                let para: Vec<&str> = induvidual_para.split(" - ").collect();
+                let contains_am_pm:bool = para[0].trim().contains("PM")||para[0].trim().contains("AM");
+                let no_timezone = NaiveDateTime::parse_from_str(para[0].trim(), &get_format(contains_am_pm)).unwrap();
+                let mut month_year =String::new();
+                write!(month_year,"week {} of 50-{}/{}",no_timezone.iso_week().week(),no_timezone.month(),no_timezone.year());//must hadle error but nah
+                let label_pos = labels.iter().position(|x| x == &month_year);
+                match label_pos{
+                    Some(pos)=>{
+                        if values.contains_key(name){
+                            let mut vec:Vec<i32> = values.get_mut(name).unwrap().to_vec();
+                            let monthly_chat_count = vec.get(pos);
+                            let new_monthly_chat_count_list = match monthly_chat_count{
+                                Some(value)=>{
+                                    let new_value = value+1;
+                                    vec.push(new_value);
+                                    vec.swap_remove(pos);
+                                    vec
+                                },
+                                None=>{
+                                    println!("{} new",para[0].trim());
+                                    vec.push(1);
+                                    vec
+                                }
+                            };
+                            println!("{} exist {:?}",para[0].trim(),values);
+                            values.insert(name.to_string(),new_monthly_chat_count_list);
+                        }else{
+                            let vec:Vec<i32> = vec![1];                    
+                            values.insert(name.to_string(),vec);
+                        }
+                    },
+                    None=>{
+                        labels.push(month_year);
+                        let mut vec_data:Vec<i32> =
+                        match values.get_mut(name){
+                            Some(val)=>{
+                                val.to_vec()
+                            },
+                            None=>{
+                                Vec::new()
+                            }
+                        };
+                        if vec_data.is_empty(){
+                             vec_data = vec![1];                        
+                        }else{
+                            vec_data.push(1);
+                        }
+                        let clone =values.clone(); 
+                            for key in clone.keys() {
+                                if key!=name{
+                                    let mut vec_data:Vec<i32> =
+                                    match values.get_mut(key){
+                                        Some(val)=>{
+                                            val.to_vec()
+                                        },
+                                        None=>{
+                                            Vec::new()
+                                        }
+                                    };
+                                    vec_data.push(0);
+                                    values.insert(key.to_string(),vec_data);
+                                }
+                        }
+                        values.insert(name.to_string(),vec_data);
+                    }
+                }
+        }
+    }
+    format!("{{\"labels\":{:?},\"values\":{:?}}}",labels,values)
+}

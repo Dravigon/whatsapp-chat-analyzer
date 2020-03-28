@@ -2,7 +2,8 @@ import {
     runWasm,
     messageCount,
     wordCount,
-    heatMapData
+    heatMapData,
+    chatBehaviourHistory 
 } from '../index.js'
 import {
     drawWordCloud
@@ -10,6 +11,9 @@ import {
 import {
     drawHeatChart
 } from './heatChart.js'
+import {
+    drawChatHistory
+} from './chatHistory.js'
 //runWasm(1,2).then(function(e){
 //    console.log(e);
 //})
@@ -37,6 +41,10 @@ function createButton(buttonText, clickCallback, containerType, size, canvasSize
 
 let removeDescription = function() {
     let elems = document.getElementsByClassName("description");
+    let title = document.getElementsByClassName("title");
+    let titleText = document.getElementsByClassName("title-text");
+    title[0].style.height="10%";
+    titleText[0].style.fontSize="30px";
     for (var elem of elems) {
         const x = elem;
         x.style.fontSize = 0;
@@ -82,7 +90,19 @@ function handleFileSelect(evt) {
                     }, "", "", {
                         height: "500",
                         width: "600"
-                    })
+                    });
+                createButton("chat history",
+                    function(canvasId) {
+                        chatBehaviourHistory(data).then(
+                            function(datas) {
+                                drawChatHistory(canvasId, datas);
+                                document.getElementById("loading-"+canvasId).style.display = 'none'
+                            }
+                        )
+                    }, "", "", {
+                        height: "100",
+                        width: "150"
+                    });
             }
         };
         reader.readAsText(f);

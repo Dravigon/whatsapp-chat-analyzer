@@ -26,17 +26,26 @@
                         'rgba(255, 159, 64, 1)'
                     ];
                     */
+        var users = "";
         Object.keys(data).forEach(function(key) {
             chartData.labels.push(key);
+            users +=" and "+ key;
             chartDataset.data.push(data[key]);
             chartDataset.backgroundColor.push(dynamicColors());
         })
+       
+        users = users.replace(/and/, "").trim();
+        
         chartData.datasets.push(chartDataset);
             var ctx = document.getElementById(countChartCanvasID).getContext('2d');
             var myChart = new Chart(ctx, {
             type: 'pie',
             data: chartData,
             options: {
+            title: {
+                display: true,
+                text: 'Chat distribution between '+users
+            },
                 scales: {
                     yAxes: [{
                         ticks: {
