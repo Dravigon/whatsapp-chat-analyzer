@@ -186,7 +186,7 @@ pub fn generate_chat_history_data(chat_data:String)->String{
                 let contains_am_pm:bool = para[0].trim().contains("PM")||para[0].trim().contains("AM");
                 let no_timezone = NaiveDateTime::parse_from_str(para[0].trim(), &get_format(contains_am_pm)).unwrap();
                 let mut month_year =String::new();
-                write!(month_year,"week {} of 50-{}/{}",no_timezone.iso_week().week(),no_timezone.month(),no_timezone.year());//must hadle error but nah
+                write!(month_year,"{}-{}-{}",no_timezone.day(),no_timezone.month(),no_timezone.year());//must hadle error but nah
                 let label_pos = labels.iter().position(|x| x == &month_year);
                 match label_pos{
                     Some(pos)=>{

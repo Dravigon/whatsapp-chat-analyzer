@@ -77,7 +77,7 @@ html,body{
     width: calc(50% - 10px)!important;
     margin: 5px;
 }
-@media only screen and (max-width: 600px) {
+@media screen and (max-width: 480px) {
     .chart.w-50{
         width: 100%!important;
     }
@@ -140,6 +140,13 @@ html,body{
     bottom: 0px;
 }
 footer{
+    text-align: center;
+    color: #ffffff;
     width: 100%;
     background-color: rgba(125, 125, 125, 0.8);
+}
+footer a{
+    color: rgb(51, 174, 255);
+    text-decoration: none;
+    font-weight: 600;
 }

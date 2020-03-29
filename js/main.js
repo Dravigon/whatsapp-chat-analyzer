@@ -49,9 +49,9 @@ let removeDescription = function() {
     let title = document.getElementsByClassName("title");
     let titleText = document.getElementsByClassName("title-text");
     let contentContainer = document.getElementsByClassName("content-container");
-    title[0].style.height="10%";
+    title[0].style.height="15%";
     titleText[0].style.fontSize="30px";
-    contentContainer[0].style.height="calc(100vh - 10% - 10px)";
+    contentContainer[0].style.height="calc(100vh - 23%)";
     for (var elem of elems) {
         const x = elem;
         x.style.fontSize = 0;

@@ -24,15 +24,6 @@ export const drawChatHistory = (canvasId, chatData) => {
                 display: true,
                 text: 'Chat Trends Per Weekly Basis'
             },
-            tooltips: {
-                callbacks: {
-                    title: function(tooltipItem, data) {
-                        var label =tooltipItem[0].xLabel || '';
-                        var week = label.split("-")[0];
-                        return week;
-                    }
-                }
-            },
             scales: {
                 yAxes: [{
                     scaleLabel: {
@@ -44,12 +35,6 @@ export const drawChatHistory = (canvasId, chatData) => {
                     id: 'xAxis1',
                     type: "category",
                     labelString: 'Month / Year',
-                    ticks: {
-                        callback: function(label) {
-                            var month = label.split("-")[1];
-                            return month;
-                        }
-                    }
                 }]
 
             }
