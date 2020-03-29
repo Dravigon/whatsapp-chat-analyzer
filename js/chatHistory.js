@@ -37,7 +37,7 @@ export const drawChatHistory = (canvasId, chatData) => {
                 yAxes: [{
                     scaleLabel: {
                         display: true,
-                        labelString: 'Total chats per week'
+                        labelString: 'Total words per week'
                     }
                 }],
                 xAxes: [{

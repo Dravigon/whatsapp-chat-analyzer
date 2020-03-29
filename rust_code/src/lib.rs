@@ -16,6 +16,9 @@ use wasm_bindgen::prelude::*;
 // Our function to concatenate the string "Wasm by Example"
 // to the input string. We are using .into(), to convert
 // the rust types of str to a String.
+// 
+const IGNORE_TEXTS: &str =r"(security code changed. Tap for more info|Messages to this chat and calls are now secured with end|Messages to this group are now secured with end| created group | added |changed to|Tap to|left$|<Media omitted>).*$"; 
+const DATE_FORMAT:&str = r"^((\d{2}|\d{1})/(\d{2}|\d{1})/\d{2}, (\d{2}|\d{1}):\d{2}).*$";
 #[wasm_bindgen]
 pub fn add_wasm_by_example_to_string(input_string: String) -> String {
   let result = format!("{} {}", input_string, "Wasm by Example");
@@ -29,14 +32,17 @@ pub fn add(a: i32, b: i32) -> i32 {
 #[wasm_bindgen]
 pub fn count_user_msg(msg: String)->String{
     let mut total_count:HashMap<&str, i32> = HashMap::new();
-    let v: Vec<&str> = msg.split("\n").collect();
-    let reverse_regex = Regex::new("(security code changed. Tap for more info|Messages to this chat and calls are now secured with end).*$").unwrap();
-    let re = Regex::new(r"^((\d{2}|\d{1})/(\d{2}|\d{1})/\d{2}, (\d{2}|\d{1}):\d{2}).*$").unwrap();
+    let v: Vec<&str> = msg.split("\n").collect();   
+    let reverse_regex = Regex::new(IGNORE_TEXTS).unwrap();
+    let re = Regex::new(DATE_FORMAT).unwrap();
     for a in v{
-         match re.is_match(a)&!reverse_regex.is_match(a){
+         match re.is_match(a){
             true=>{
                 let v: Vec<&str> = a.splitn(4, |c| c == '-' || c == ':').collect();
                 let name = v[2].trim();
+                if reverse_regex.is_match(name){
+                    continue
+                }
                 if total_count.contains_key(name){
                     total_count.insert(name,total_count.get(name).unwrap()+1);
                 }else{
@@ -47,9 +53,8 @@ pub fn count_user_msg(msg: String)->String{
             false=>{},
         }
     }
-    //format!("{:?}",total_count);
   let result = format!("{:?}", total_count);
-  return result.into();
+  return result.replace("\\u","u").into();
 }
 #[wasm_bindgen]
 pub fn count_words(msg: String,pronoun:String)->String{
@@ -70,14 +75,14 @@ pub fn count_words(msg: String,pronoun:String)->String{
     let mut unique_word_count:f32 = 0.0;
     let para_list: Vec<&str> = msg.split("\n").collect();
     let pronoun_list:Vec<&str>=pronoun.split(",").collect();
-    let reverse_regex = Regex::new("(security code changed. Tap for more info|Messages to this chat and calls are now secured with end|<Media).*$").unwrap();
+    let reverse_regex = Regex::new(IGNORE_TEXTS).unwrap();
     for induvidual_para in para_list{
         if reverse_regex.is_match(induvidual_para){
             continue
         }
         let mut para:&str=induvidual_para;
 
-        let re = Regex::new(r"^((\d{2}|\d{1})/(\d{2}|\d{1})/\d{2}, (\d{2}|\d{1}):\d{2}).*$").unwrap();
+        let re = Regex::new(DATE_FORMAT).unwrap();
 
         if re.is_match(para){
             let tmp:Vec<&str> = para.splitn(3,":").collect();
@@ -137,7 +142,7 @@ fn get_format(contains_am_pm:bool)->String{
 pub fn generate_heat_map_data(chat_data:String)->String{
     let mut values:HashMap<String, Vec<i32>> = HashMap::new();
     let para_list: Vec<&str> = chat_data.split("\n").collect();
-    let re = Regex::new(r"^((\d{2}|\d{1})/(\d{2}|\d{1})/\d{2}, (\d{2}|\d{1}):\d{2}).*$").unwrap();
+    let re = Regex::new(DATE_FORMAT).unwrap();
     for induvidual_para in para_list{
         if re.is_match(induvidual_para){
                 let para: Vec<&str> = induvidual_para.split(" - ").collect();
@@ -162,14 +167,19 @@ pub fn generate_heat_map_data(chat_data:String)->String{
 }
 #[wasm_bindgen]
 pub fn generate_chat_history_data(chat_data:String)->String{
-    let mut values:HashMap<String, Vec<i32>> = HashMap::new();
+    let mut values:HashMap<String, Vec<u32>> = HashMap::new();
     let mut labels:Vec<String> = Vec::new();
     let para_list: Vec<&str> = chat_data.split("\n").collect();
-    let re = Regex::new(r"^((\d{2}|\d{1})/(\d{2}|\d{1})/\d{2}, (\d{2}|\d{1}):\d{2}).*$").unwrap(); 
-    let reverse_regex = Regex::new("(security code changed. Tap for more info|Messages to this chat and calls are now secured with end).*$").unwrap();
+    let re = Regex::new(DATE_FORMAT).unwrap(); 
+    let reverse_regex = Regex::new(IGNORE_TEXTS).unwrap();
 
     for induvidual_para in para_list{
         if re.is_match(induvidual_para)&!reverse_regex.is_match(induvidual_para){
+
+            let tmp:Vec<&str> = induvidual_para.splitn(3,":").collect();
+            let para:&str=&tmp[2];
+            let word_list:Vec<&str> = para.split(" ").collect();
+            let word_count = word_list.len() as u32;
                 let v: Vec<&str> = induvidual_para.splitn(4, |c| c == '-' || c == ':').collect();                                              
                 let name = v[2].trim();      
                 let para: Vec<&str> = induvidual_para.split(" - ").collect();
@@ -181,31 +191,31 @@ pub fn generate_chat_history_data(chat_data:String)->String{
                 match label_pos{
                     Some(pos)=>{
                         if values.contains_key(name){
-                            let mut vec:Vec<i32> = values.get_mut(name).unwrap().to_vec();
+                            let mut vec:Vec<u32> = values.get_mut(name).unwrap().to_vec();
                             let monthly_chat_count = vec.get(pos);
                             let new_monthly_chat_count_list = match monthly_chat_count{
                                 Some(value)=>{
-                                    let new_value = value+1;
+                                    let new_value = value+word_count;
                                     vec.push(new_value);
                                     vec.swap_remove(pos);
                                     vec
                                 },
                                 None=>{
                                     println!("{} new",para[0].trim());
-                                    vec.push(1);
+                                    vec.push(word_count);
                                     vec
                                 }
                             };
                             println!("{} exist {:?}",para[0].trim(),values);
                             values.insert(name.to_string(),new_monthly_chat_count_list);
                         }else{
-                            let vec:Vec<i32> = vec![1];                    
+                            let vec:Vec<u32> = vec![word_count];                    
                             values.insert(name.to_string(),vec);
                         }
                     },
                     None=>{
                         labels.push(month_year);
-                        let mut vec_data:Vec<i32> =
+                        let mut vec_data:Vec<u32> =
                         match values.get_mut(name){
                             Some(val)=>{
                                 val.to_vec()
@@ -215,14 +225,14 @@ pub fn generate_chat_history_data(chat_data:String)->String{
                             }
                         };
                         if vec_data.is_empty(){
-                             vec_data = vec![1];                        
+                             vec_data = vec![word_count];                        
                         }else{
-                            vec_data.push(1);
+                            vec_data.push(word_count);
                         }
                         let clone =values.clone(); 
                             for key in clone.keys() {
                                 if key!=name{
-                                    let mut vec_data:Vec<i32> =
+                                    let mut vec_data:Vec<u32> =
                                     match values.get_mut(key){
                                         Some(val)=>{
                                             val.to_vec()
@@ -240,5 +250,5 @@ pub fn generate_chat_history_data(chat_data:String)->String{
                 }
         }
     }
-    format!("{{\"labels\":{:?},\"values\":{:?}}}",labels,values)
+    format!("{{\"labels\":{:?},\"values\":{:?}}}",labels,values).replace("\\u","u")
 }

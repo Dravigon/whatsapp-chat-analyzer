@@ -40,11 +40,18 @@ function createButton(buttonText, clickCallback, containerType, size, canvasSize
 }
 
 let removeDescription = function() {
+    let canvasDiv = document.getElementById("canvas-div");
+    if(canvasDiv.innerHTML.trim()!==""){
+        canvasDiv.innerHTML="";
+        return;
+    }
     let elems = document.getElementsByClassName("description");
     let title = document.getElementsByClassName("title");
     let titleText = document.getElementsByClassName("title-text");
+    let contentContainer = document.getElementsByClassName("content-container");
     title[0].style.height="10%";
     titleText[0].style.fontSize="30px";
+    contentContainer[0].style.height="calc(100vh - 10% - 10px)";
     for (var elem of elems) {
         const x = elem;
         x.style.fontSize = 0;
