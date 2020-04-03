@@ -4,7 +4,7 @@ var dynamicColors = function() {
     var b = Math.floor(Math.random() * 255);
     return "rgb(" + r + "," + g + "," + b + ")";
 };
-export const drawChatHistory = (canvasId, chatData) => {
+export const drawChatFrequency = (canvasId, chatData) => {
     chatData.datasets = [];
 
     for (var x in chatData.values) {
@@ -22,19 +22,19 @@ export const drawChatHistory = (canvasId, chatData) => {
         options: {
             title: {
                 display: true,
-                text: 'Chat Trends Per Day Basis'
+                text: 'Chat Frequency Daily Basis'
             },
             scales: {
                 yAxes: [{
                     scaleLabel: {
                         display: true,
-                        labelString: 'Total words per Day'
+                        labelString: 'Maximum words per minute'
                     }
                 }],
                 xAxes: [{
                     id: 'xAxis1',
                     type: "category",
-                    labelString: 'Day / Month / Year',
+                    labelString: 'day / month / Year',
                 }]
 
             }

@@ -1,5 +1,6 @@
 use regex::Regex;
 use chrono::{Datelike, NaiveDateTime, Timelike};
+use chrono::Duration;
 use std::convert::TryInto;
 use std::fmt::Write;
 use std::cmp::Ordering;
@@ -172,6 +173,189 @@ pub fn generate_chat_history_data(chat_data:String)->String{
     let para_list: Vec<&str> = chat_data.split("\n").collect();
     let re = Regex::new(DATE_FORMAT).unwrap(); 
     let reverse_regex = Regex::new(IGNORE_TEXTS).unwrap();
+    
+    let mut remember_times:HashMap<String, NaiveDateTime> = HashMap::new();
+    let mut chat_start:NaiveDateTime = NaiveDateTime::parse_from_str("1995-01-01 00:00:00", "%Y-%m-%d %H:%M:%S").unwrap();
+    let remember_time:NaiveDateTime = NaiveDateTime::parse_from_str("1995-01-01 00:00:00", "%Y-%m-%d %H:%M:%S").unwrap();
+    let mut remember_name="";
+    let mut remember_minute:HashMap<String,u32> = HashMap::new();
+    for induvidual_para in para_list{
+        if induvidual_para.trim()==""{
+            continue
+        }
+      
+        if !reverse_regex.is_match(induvidual_para){
+         
+            let mut para:&str=induvidual_para;
+            let mut name = remember_name;
+            let mut no_timezone = remember_time;
+            if re.is_match(induvidual_para){
+                let tmp:Vec<&str> = induvidual_para.splitn(3,":").collect();
+                para=&tmp[2];
+                let v: Vec<&str> = induvidual_para.splitn(4, |c| c == '-' || c == ':').collect();   
+                name = v[2].trim();
+                remember_name = name;
+                let para: Vec<&str> = induvidual_para.split(" - ").collect();
+                let contains_am_pm:bool = para[0].trim().contains("PM")||para[0].trim().contains("AM");
+                no_timezone = NaiveDateTime::parse_from_str(para[0].trim(), &get_format(contains_am_pm)).unwrap();
+                if chat_start.year()==1995{
+                    chat_start=no_timezone.clone();
+                }
+                if remember_times.get(name)==None{
+                    remember_times.insert(name.to_string(),no_timezone.clone());
+                    remember_minute.insert(name.to_string(),no_timezone.minute());
+                    let days_inactive = no_timezone.signed_duration_since(chat_start).num_days();
+                    for x in 1..days_inactive{
+                        let inactive_day = chat_start +  Duration::days(x);
+                        let mut temp_day= String::new();
+                        write!(temp_day,"{}-{}-{}",inactive_day.day(),inactive_day.month(),inactive_day.year());
+                        let label_pos = labels.iter().position(|x| x == &temp_day);
+                       match label_pos{
+                            Some(_x)=>{},
+                            None=>{
+                                labels.push(temp_day);
+                            }
+                        }
+                        let mut vec_data:Vec<u32> =
+                        match values.get_mut(name){
+                            Some(val)=>{
+                                val.to_vec()
+                            },
+                            None=>{
+                                Vec::new()
+                                }
+                            };
+                        vec_data.push(0);
+                        values.insert(name.to_string(),vec_data);
+                    }
+                }
+            }else{
+                no_timezone = *remember_times.get(name).unwrap();
+            }
+             println!("{} : {} - {} ",no_timezone,name,induvidual_para);
+            let word_list:Vec<&str> = para.split(" ").collect();
+            let word_count = word_list.len() as u32;
+       
+ 
+                let mut month_year =String::new();
+                write!(month_year,"{}-{}-{}",no_timezone.day(),no_timezone.month(),no_timezone.year());//must hadle error but nah
+                let label_pos = labels.iter().position(|x| x == &month_year);
+                match label_pos{
+                    Some(pos)=>{
+                            let mut vec:Vec<u32> = values.get_mut(name).unwrap().to_vec();
+                            let monthly_chat_count = vec.get(pos);
+                            let new_monthly_chat_count_list = match monthly_chat_count{
+                                Some(value)=>{
+                                        println!("{} {:?} ---",name,values.get(name));
+                                        let new_value = value+word_count;
+                                        vec.push(new_value);
+                                        vec.swap_remove(pos);
+                                        vec
+                                },
+                                None=>{
+                                    //println!("{} new",para[0].trim());
+                                    let days_inactive = no_timezone.signed_duration_since(*remember_times.get(name).unwrap()).num_days();
+                                    println!("{} {:?} {} has value",name,values.get(name),days_inactive);
+                                    for _x in 1..days_inactive{
+                                        vec.push(0);
+                                    }
+                                    vec.push(word_count);
+                                    vec
+                                }
+                            };
+                            values.insert(name.to_string(),new_monthly_chat_count_list);
+                    },
+                    None=>{
+                        //push data
+
+                            let days_inactive = no_timezone.signed_duration_since(*remember_times.get(name).unwrap()).num_days();
+                      
+                            for x in 1..days_inactive{
+                            println!("re {}",*remember_times.get(name).unwrap());
+                                let inactive_day = *remember_times.get(name).unwrap() +  Duration::days(x );
+                                let mut temp_day= String::new();
+                                write!(temp_day,"{}-{}-{}",inactive_day.day(),inactive_day.month(),inactive_day.year());//must hadle error but nah
+                                println!("{}",temp_day);
+                                let label_pos = labels.iter().position(|x| x == &temp_day);
+                                match label_pos{
+                                    Some(_x)=>{},
+                                    None=>{
+                                        labels.push(temp_day);
+                                    }
+                                }
+
+                                let mut vec_data:Vec<u32> =
+                                match values.get_mut(name){
+                                    Some(val)=>{
+                                        val.to_vec()
+                                    },
+                                    None=>{
+                                        Vec::new()
+                                    }
+                                };
+                                vec_data.push(0);
+                                values.insert(name.to_string(),vec_data);
+                            }
+                        
+                        remember_minute.insert(name.to_string(),no_timezone.minute());
+                        
+                       let label_pos = labels.iter().position(|x| x == &month_year);
+                       match label_pos{
+                            Some(_x)=>{},
+                            None=>{
+                                labels.push(month_year);
+                            }
+                        }
+                        let mut vec_data:Vec<u32> =
+                        match values.get_mut(name){
+                            Some(val)=>{
+                                val.to_vec()
+                            },
+                            None=>{
+                                Vec::new()
+                            }
+                        };
+                        if vec_data.is_empty(){
+                             vec_data = vec![word_count];                        
+                        }else{
+                            vec_data.push(word_count);
+                        }
+                        let clone =values.clone(); 
+                            for key in clone.keys() {
+                                if key!=name{
+                                    let mut vec_data:Vec<u32> =
+                                    match values.get_mut(key){
+                                        Some(val)=>{
+                                            val.to_vec()
+                                        },
+                                        None=>{
+                                            Vec::new()
+                                        }
+                                    };
+                                    vec_data.push(0);
+                                    values.insert(key.to_string(),vec_data);
+                                }
+                        }
+                        values.insert(name.to_string(),vec_data);
+                    
+                          println!("{} {:?} {}",name,values.get(name),days_inactive);
+                    }
+                    
+                }
+                remember_times.insert(name.to_string(),no_timezone.clone());
+        }
+    }
+    format!("{{\"labels\":{:?},\"values\":{:?}}}",labels,values).replace("\\u","u")
+}
+#[wasm_bindgen]
+pub fn generate_chat_frequency_data(chat_data:String)->String{
+    let mut values:HashMap<String, Vec<u32>> = HashMap::new();
+    let mut labels:Vec<String> = Vec::new();
+    let para_list: Vec<&str> = chat_data.split("\n").collect();
+    let re = Regex::new(DATE_FORMAT).unwrap(); 
+    let reverse_regex = Regex::new(IGNORE_TEXTS).unwrap();
+    
+    let mut old_value:NaiveDateTime = NaiveDateTime::parse_from_str("1995-01-01 00:00:00", "%Y-%m-%d %H:%M:%S").unwrap();
 
     for induvidual_para in para_list{
         if re.is_match(induvidual_para)&!reverse_regex.is_match(induvidual_para){
@@ -180,6 +364,7 @@ pub fn generate_chat_history_data(chat_data:String)->String{
             let para:&str=&tmp[2];
             let word_list:Vec<&str> = para.split(" ").collect();
             let word_count = word_list.len() as u32;
+            let mut old_minute = 0;
                 let v: Vec<&str> = induvidual_para.splitn(4, |c| c == '-' || c == ':').collect();                                              
                 let name = v[2].trim();      
                 let para: Vec<&str> = induvidual_para.split(" - ").collect();
@@ -195,10 +380,17 @@ pub fn generate_chat_history_data(chat_data:String)->String{
                             let monthly_chat_count = vec.get(pos);
                             let new_monthly_chat_count_list = match monthly_chat_count{
                                 Some(value)=>{
-                                    let new_value = value+word_count;
-                                    vec.push(new_value);
-                                    vec.swap_remove(pos);
-                                    vec
+                                    if old_minute==no_timezone.minute(){
+                                        let new_value = value+word_count;
+                                        vec.push(new_value);
+                                        vec.swap_remove(pos);
+                                        vec
+                                    }else{
+                                        let new_value = if value>&word_count {value} else {&word_count};
+                                        vec.push(*new_value);
+                                        vec.swap_remove(pos);
+                                        vec
+                                    }
                                 },
                                 None=>{
                                     println!("{} new",para[0].trim());
@@ -206,7 +398,6 @@ pub fn generate_chat_history_data(chat_data:String)->String{
                                     vec
                                 }
                             };
-                            println!("{} exist {:?}",para[0].trim(),values);
                             values.insert(name.to_string(),new_monthly_chat_count_list);
                         }else{
                             let vec:Vec<u32> = vec![word_count];                    
@@ -214,7 +405,35 @@ pub fn generate_chat_history_data(chat_data:String)->String{
                         }
                     },
                     None=>{
+                        //push data
+                        if old_value.year()!=1995{
+                            let days_inactive = no_timezone.signed_duration_since(old_value).num_days();
+                            for x in 1..days_inactive{
+                                let inactive_day = no_timezone +  Duration::days(x-2);
+                                let mut temp_day= String::new();
+                                write!(temp_day,"{}-{}-{}",inactive_day.day(),inactive_day.month(),inactive_day.year());//must hadle error but nah
+                               labels.push(temp_day);
+                                let clone =values.clone(); 
+                                    for key in clone.keys() {
+                                        let mut vec_data:Vec<u32> =
+                                        match values.get_mut(key){
+                                            Some(val)=>{
+                                                val.to_vec()
+                                            },
+                                            None=>{
+                                                Vec::new()
+                                            }
+                                        };
+                                        vec_data.push(0);
+                                        values.insert(key.to_string(),vec_data);
+                                    }
+
+                            }
+                        }
+                        old_minute = no_timezone.minute();
+                        old_value =  NaiveDateTime::parse_from_str(para[0].trim(), &get_format(contains_am_pm)).unwrap().date().and_hms(0,0,0);
                         labels.push(month_year);
+                        
                         let mut vec_data:Vec<u32> =
                         match values.get_mut(name){
                             Some(val)=>{

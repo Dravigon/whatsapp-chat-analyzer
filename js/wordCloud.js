@@ -28,9 +28,8 @@ export const drawWordCloud = (divId, wordList, config) => {
     var cloud = document.createElement("div");
     cloud.style.position = "relative";
     cloud.style.fontFamily = config.font;
-    //cloud.style.transform="translateX(0%) translateY(50%)"
     cloud.style.height = "50vh";
-    cloud.style.width = "100%";
+    cloud.style.width = "80%";
     cloud.style.margin = " 0 auto";
     cloud.style.fontSize = "45px";
     cloud.style.padding = "10%";

@@ -3,7 +3,8 @@ import {
     messageCount,
     wordCount,
     heatMapData,
-    chatBehaviourHistory 
+    chatBehaviourHistory,
+    chatIntrestHistory
 } from '../index.js'
 import {
     drawWordCloud
@@ -14,16 +15,14 @@ import {
 import {
     drawChatHistory
 } from './chatHistory.js'
-//runWasm(1,2).then(function(e){
-//    console.log(e);
-//})
-//
+import{
+    drawChatFrequency
+} from './chatFrequency.js'
 
 let pronoun_list = "i,me,my,myself,we,our,ours,ourselves,you,your,yours,yourself,yourselves,he,him,his,himself,she,her,hers,herself,it,its,itself,they,them,their,theirs,themselves,what,which,who,whom,this,that,these,those,am,is,are,was,were,be,been,being,have,has,had,having,do,does,did,doing,a,an,the,and,but,if,or,because,as,until,while,of,at,by,for,with,about,against,between,into,through,during,before,after,above,below,to,from,up,down,in,out,on,off,over,under,again,further,then,once,here,there,when,where,why,how,all,any,both,each,few,more,most,other,some,such,no,nor,not,only,own,same,so,than,too,very,s,t,can,will,just,don,should,now";
 function createButton(buttonText, clickCallback, containerType, size, canvasSize) {
     
   
-        //console.log(clickCallback.toString());
     //create Button
     var canvasComponent = document.createElement("custom-card");
     canvasComponent.setAttribute("card-text", buttonText);
@@ -33,7 +32,7 @@ function createButton(buttonText, clickCallback, containerType, size, canvasSize
         canvasComponent.setAttribute("canvas-width", canvasSize.width);
     }
     canvasComponent.addEventListener("clicked", (evt) => {
-        ga('send', 'event', buttonText, 'click', '');
+        ga('send', 'event', buttonText, 'click', 'analyse');
         clickCallback(evt.detail.id);
     });
     var genericCanvasContainer = document.createElement("div");
@@ -46,7 +45,7 @@ function createButton(buttonText, clickCallback, containerType, size, canvasSize
 let removeDescription = function() {
     let canvasDiv = document.getElementById("canvas-div");
     if(canvasDiv.innerHTML.trim()!==""){
-        ga('send', 'event', 'New Document in a single session', 'click', '');
+        ga('send', 'event', 'New Document in a single session', 'click', 'reload-data');
         canvasDiv.innerHTML="";
         return;
     }
@@ -110,7 +109,7 @@ function handleFileSelect(evt) {
                         loading.style.position='fixed';
                         loading.style.zIndex='9';
                         loading.style.transform='translateY(200%)';
-                        ga('send', 'event', 'Change Most used words', 'click', ignoreWordList.value);
+                        ga('send', 'event', 'Change Most used words', 'click','reload-data', ignoreWordList.value);
                         wordCount(data,ignoreWordList.value).then(function(e) {
                             document.getElementById(canvasId).innerHTML="";
                             repaintContainer.appendChild(labelText);
@@ -130,7 +129,7 @@ function handleFileSelect(evt) {
                         document.getElementById("loading-"+canvasId).style.display = 'none'
                     })
                 }, "div");
-                createButton("heat chart",
+                createButton("Heat Chart",
                     function(canvasId) {
                         heatMapData(data).then(
                             function(datas) {
@@ -142,11 +141,23 @@ function handleFileSelect(evt) {
                         height: "500",
                         width: "600"
                     });
-                createButton("chat history",
+                createButton("Chat History",
                     function(canvasId) {
                         chatBehaviourHistory(data).then(
                             function(datas) {
                                 drawChatHistory(canvasId, datas);
+                                document.getElementById("loading-"+canvasId).style.display = 'none'
+                            }
+                        )
+                    }, "", "", {
+                        height: "100",
+                        width: "150"
+                    });
+                createButton("Chat Intrest",
+                    function(canvasId) {
+                        chatIntrestHistory(data).then(
+                            function(datas) {
+                                drawChatFrequency(canvasId, datas);
                                 document.getElementById("loading-"+canvasId).style.display = 'none'
                             }
                         )
