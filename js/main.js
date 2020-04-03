@@ -22,7 +22,7 @@ import {
 let pronoun_list = "i,me,my,myself,we,our,ours,ourselves,you,your,yours,yourself,yourselves,he,him,his,himself,she,her,hers,herself,it,its,itself,they,them,their,theirs,themselves,what,which,who,whom,this,that,these,those,am,is,are,was,were,be,been,being,have,has,had,having,do,does,did,doing,a,an,the,and,but,if,or,because,as,until,while,of,at,by,for,with,about,against,between,into,through,during,before,after,above,below,to,from,up,down,in,out,on,off,over,under,again,further,then,once,here,there,when,where,why,how,all,any,both,each,few,more,most,other,some,such,no,nor,not,only,own,same,so,than,too,very,s,t,can,will,just,don,should,now";
 function createButton(buttonText, clickCallback, containerType, size, canvasSize) {
     
-        ga('send', 'event', 'File selected', 'click', 'test');
+  
         //console.log(clickCallback.toString());
     //create Button
     var canvasComponent = document.createElement("custom-card");
@@ -33,6 +33,7 @@ function createButton(buttonText, clickCallback, containerType, size, canvasSize
         canvasComponent.setAttribute("canvas-width", canvasSize.width);
     }
     canvasComponent.addEventListener("clicked", (evt) => {
+        ga('send', 'event', buttonText, 'click', '');
         clickCallback(evt.detail.id);
     });
     var genericCanvasContainer = document.createElement("div");
@@ -45,6 +46,7 @@ function createButton(buttonText, clickCallback, containerType, size, canvasSize
 let removeDescription = function() {
     let canvasDiv = document.getElementById("canvas-div");
     if(canvasDiv.innerHTML.trim()!==""){
+        ga('send', 'event', 'New Document in a single session', 'click', '');
         canvasDiv.innerHTML="";
         return;
     }
@@ -108,6 +110,7 @@ function handleFileSelect(evt) {
                         loading.style.position='fixed';
                         loading.style.zIndex='9';
                         loading.style.transform='translateY(200%)';
+                        ga('send', 'event', 'Change Most used words', 'click', ignoreWordList.value);
                         wordCount(data,ignoreWordList.value).then(function(e) {
                             document.getElementById(canvasId).innerHTML="";
                             repaintContainer.appendChild(labelText);
