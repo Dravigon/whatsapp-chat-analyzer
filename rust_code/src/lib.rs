@@ -6,6 +6,8 @@ use std::fmt::Write;
 use std::cmp::Ordering;
 
 use std::collections::HashMap;
+
+extern crate console_error_panic_hook;
 // The wasm-pack uses wasm-bindgen to build and generate JavaScript binding file.
 // Import the wasm-bindgen crate. 
 use wasm_bindgen::prelude::*;
@@ -166,8 +168,10 @@ pub fn generate_heat_map_data(chat_data:String)->String{
     }
     format!("{:?}",values)
 }
+
 #[wasm_bindgen]
 pub fn generate_chat_history_data(chat_data:String)->String{
+    console_error_panic_hook::set_once();
     let mut values:HashMap<String, Vec<u32>> = HashMap::new();
     let mut labels:Vec<String> = Vec::new();
     let para_list: Vec<&str> = chat_data.split("\n").collect();
@@ -228,6 +232,17 @@ pub fn generate_chat_history_data(chat_data:String)->String{
                         vec_data.push(0);
                         values.insert(name.to_string(),vec_data);
                     }
+                    let mut vec_data:Vec<u32> =
+                    match values.get_mut(name){
+                        Some(val)=>{
+                            val.to_vec()
+                        },
+                        None=>{
+                            Vec::new()
+                        }
+                    };
+                    vec_data.push(0);
+                    values.insert(name.to_string(),vec_data);
                 }
             }else{
                 no_timezone = *remember_times.get(name).unwrap();

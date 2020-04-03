@@ -11,3 +11,4 @@ crate-type = ["cdylib"]
 wasm-bindgen = "0.2"
 regex = "1"
 chrono = "0.4"
+console_error_panic_hook = "0.1.6"
