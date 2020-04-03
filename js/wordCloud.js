@@ -33,6 +33,7 @@ export const drawWordCloud = (divId, wordList, config) => {
     cloud.style.width = "100%";
     cloud.style.margin = " 0 auto";
     cloud.style.fontSize = "45px";
+    cloud.style.padding = "10%";
 
     var traceCanvas = document.createElement("canvas");
     traceCanvas.width = cloud.offsetWidth;
@@ -41,7 +42,6 @@ export const drawWordCloud = (divId, wordList, config) => {
     cloud.appendChild(traceCanvas);
 
     var parent = document.getElementById(divId);
-    parent.innerHTML="";
     parent.appendChild(cloud);
 
 
