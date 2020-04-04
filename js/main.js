@@ -60,6 +60,7 @@ let removeDescription = function() {
     title[0].style.height="15%";
     title[0].style.boxShadow="0px 1px 1px black";
     titleText[0].style.fontSize="30px";
+    titleText[0].style.lineHeight="30px"
     contentContainer[0].style.height="calc(100vh - 23%)";
     for (var elem of elems) {
         const x = elem;
