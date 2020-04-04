@@ -80,7 +80,7 @@ function handleFileSelect(evt) {
             if (evt.target.readyState == FileReader.DONE) { // DONE == 2
                 removeDescription();
                 var data = evt.target.result;
-                const convoDistDescription = "This gives the total number of conversation done by a person compared it to others in the chat";
+                const convoDistDescription = "This gives the total number of conversation done by a person compared it to others in the chat (This would give a rough estimate of user's contibution to your chat)";
                 createButton("Conversation distribution",convoDistDescription, function(canvasId) {
                     messageCount(data).then(function(e) {
                         (function(chart) {
@@ -134,7 +134,7 @@ function handleFileSelect(evt) {
                         document.getElementById("loading-"+canvasId).style.display = 'none'
                     })
                 }, "div");
-                const heatChartDescription = "This gives average chat activity time during every hour for every week day";
+                const heatChartDescription = "This gives average chat activity time during every hour for every week day (This shows when the user/group was actively intracting with other user(s))";
                 createButton("Heat Chart",heatChartDescription,
                     function(canvasId) {
                         heatMapData(data).then(
@@ -147,7 +147,7 @@ function handleFileSelect(evt) {
                         height: "500",
                         width: "600"
                     });
-                const chatHistoryDescription = "This gives the total number of words typed by a person per day over the time period of the chat";
+                const chatHistoryDescription = "This gives the total number of words typed by a person per day over the time period of the chat (Provides you with the detail of amounts of words excahged over time)";
                 createButton("Chat History",chatHistoryDescription,
                     function(canvasId) {
                         chatBehaviourHistory(data).then(
@@ -160,7 +160,7 @@ function handleFileSelect(evt) {
                         height: "100",
                         width: "150"
                     });
-                const chatIntrestHistoryDescription = "This gives the Max words per minute every day over the time period of the chat";
+                const chatIntrestHistoryDescription = "This gives the Max words per minute every day over the time period of the chat (Gives the rate at which Conversation occured over time Can roughly translate to the user's intrest in the conversation)";
                 createButton("Chat Intrest",chatIntrestHistoryDescription,
                     function(canvasId) {
                         chatIntrestHistory(data).then(
