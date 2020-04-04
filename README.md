@@ -6,4 +6,4 @@ Chat analysis is done on browser using Rust's WASM binding so that it is fast
 
 Tried to limit third part libraries and frameworks 
 
-Currently hosted in <a target ='_blank' href = 'https://profile.dravid.dev/whatsapp-chat-analyzer'>HERE</a>
+Currently hosted in <a target ='_blank' href = 'https://whatsapp.analyzer.dravid.dev/'>HERE</a>
