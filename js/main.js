@@ -18,14 +18,18 @@ import {
 import{
     drawChatFrequency
 } from './chatFrequency.js'
+import{
+    downloadAllCanvas
+} from './downloadCanvas.js'
 
 let pronoun_list = "i,me,my,myself,we,our,ours,ourselves,you,your,yours,yourself,yourselves,he,him,his,himself,she,her,hers,herself,it,its,itself,they,them,their,theirs,themselves,what,which,who,whom,this,that,these,those,am,is,are,was,were,be,been,being,have,has,had,having,do,does,did,doing,a,an,the,and,but,if,or,because,as,until,while,of,at,by,for,with,about,against,between,into,through,during,before,after,above,below,to,from,up,down,in,out,on,off,over,under,again,further,then,once,here,there,when,where,why,how,all,any,both,each,few,more,most,other,some,such,no,nor,not,only,own,same,so,than,too,very,s,t,can,will,just,don,should,now";
-function createButton(buttonText, clickCallback, containerType, size, canvasSize) {
+function createButton(buttonText,cardDescription, clickCallback, containerType, size, canvasSize) {
     
   
     //create Button
     var canvasComponent = document.createElement("custom-card");
     canvasComponent.setAttribute("card-text", buttonText);
+    canvasComponent.setAttribute("card-description", cardDescription);
     containerType && canvasComponent.setAttribute("container-type", containerType);
     if (canvasSize) {
         canvasComponent.setAttribute("canvas-height", canvasSize.height);
@@ -76,8 +80,8 @@ function handleFileSelect(evt) {
             if (evt.target.readyState == FileReader.DONE) { // DONE == 2
                 removeDescription();
                 var data = evt.target.result;
-
-                createButton("Conversation distribution", function(canvasId) {
+                const convoDistDescription = "This gives the total number of conversation done by a person compared it to others in the chat";
+                createButton("Conversation distribution",convoDistDescription, function(canvasId) {
                     messageCount(data).then(function(e) {
                         (function(chart) {
                             chart.countChart(canvasId, e);
@@ -85,7 +89,8 @@ function handleFileSelect(evt) {
                         })(whatsappChart);
                     })
                 });
-                createButton("Word Usage", function(canvasId) {
+                const wordUsageDescription = "This gives the top most used words displayed bigged if most used, common words like i,am,he...etc., are ignored. To ignore some words specific for your chat please change the ignore list and click Repaint";
+                createButton("Word Usage",wordUsageDescription, function(canvasId) {
                     let repaintContainer = document.createElement('div');
                     repaintContainer.style.display="flex";
                     repaintContainer.style.flexWrap="wrap";
@@ -129,7 +134,8 @@ function handleFileSelect(evt) {
                         document.getElementById("loading-"+canvasId).style.display = 'none'
                     })
                 }, "div");
-                createButton("Heat Chart",
+                const heatChartDescription = "This gives average chat activity time during every hour for every week day";
+                createButton("Heat Chart",heatChartDescription,
                     function(canvasId) {
                         heatMapData(data).then(
                             function(datas) {
@@ -141,7 +147,8 @@ function handleFileSelect(evt) {
                         height: "500",
                         width: "600"
                     });
-                createButton("Chat History",
+                const chatHistoryDescription = "This gives the total number of words typed by a person per day over the time period of the chat";
+                createButton("Chat History",chatHistoryDescription,
                     function(canvasId) {
                         chatBehaviourHistory(data).then(
                             function(datas) {
@@ -153,7 +160,8 @@ function handleFileSelect(evt) {
                         height: "100",
                         width: "150"
                     });
-                createButton("Chat Intrest",
+                const chatIntrestHistoryDescription = "This gives the Max words per minute every day over the time period of the chat";
+                createButton("Chat Intrest",chatIntrestHistoryDescription,
                     function(canvasId) {
                         chatIntrestHistory(data).then(
                             function(datas) {
@@ -165,6 +173,36 @@ function handleFileSelect(evt) {
                         height: "100",
                         width: "150"
                     });
+                let downloadCard = document.createElement("div");
+                downloadCard.className="chart w-50";
+                downloadCard.innerHTML=`
+                <div id="psuedo-container-download-data" class="card" style="background-image:none">
+                <p>every chart would download as induvidual image</p>
+                </div>
+                `;
+                document.getElementById("canvas-div").appendChild(downloadCard);
+                let downloadButton = document.createElement('button');
+                downloadButton.innerHTML="Download Analysed Data";
+                let reccomendationText = document.createElement('p');
+                reccomendationText.innerText="Your feed backs are valuble please let us know what you would want to see or change";
+                let recommendationMessage = document.createElement('textarea');
+                recommendationMessage.id="feedback";
+                recommendationMessage.style.verticalAlign="middle";
+                let reccomendationButton = document.createElement('button');
+                reccomendationButton.innerHTML="Send FeedBack";
+                downloadButton.innerHTML="Download Analysed Data";
+                document.getElementById("psuedo-container-download-data").appendChild(downloadButton);
+                document.getElementById("psuedo-container-download-data").appendChild(reccomendationText);
+                document.getElementById("psuedo-container-download-data").appendChild(recommendationMessage);
+                document.getElementById("psuedo-container-download-data").appendChild(reccomendationButton);
+                downloadButton.onclick=(e)=>{
+                    ga('send', 'event', 'Download Analysis', 'click', 'download');
+                    downloadAllCanvas()
+                }
+                reccomendationButton.onclick=(e)=>{
+                    let feedbackText = document.getElementById('feedback');
+                    ga('send', 'event', 'FeedBack', 'click','feedback-data', feedbackText.value);
+                }
             }
         };
         reader.readAsText(f);

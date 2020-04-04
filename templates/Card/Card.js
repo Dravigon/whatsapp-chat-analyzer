@@ -29,7 +29,7 @@ class Card extends HTMLElement {
         button.textContent = "Analyse";
         button.onclick = (evt) => {
             document.getElementById(this.containerId).innerHTML = `
-            <h1>${this.title}</h1>
+            <h1 title="${this.contentText}">${this.title}</h1>
             <div id='loading-${this.canvasId}' class="lds-roller">
                 <div></div>
                 <div></div>
