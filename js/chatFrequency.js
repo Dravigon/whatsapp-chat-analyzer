@@ -20,6 +20,8 @@ export const drawChatFrequency = (canvasId, chatData) => {
         type: 'line',
         data: chatData,
         options: {
+            responsive: true,
+            maintainAspectRatio: false,
             title: {
                 display: true,
                 text: 'Chat Frequency Daily Basis'

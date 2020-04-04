@@ -20,6 +20,8 @@ export const drawChatHistory = (canvasId, chatData) => {
         type: 'line',
         data: chatData,
         options: {
+            responsive: true,
+            maintainAspectRatio: false,
             title: {
                 display: true,
                 text: 'Chat Trends Per Day Basis'

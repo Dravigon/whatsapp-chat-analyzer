@@ -57,7 +57,7 @@ let removeDescription = function() {
     let title = document.getElementsByClassName("title");
     let titleText = document.getElementsByClassName("title-text");
     let contentContainer = document.getElementsByClassName("content-container");
-    title[0].style.height="15%";
+    title[0].style.height="auto";
     title[0].style.boxShadow="0px 1px 1px black";
     titleText[0].style.fontSize="30px";
     titleText[0].style.lineHeight="30px"
@@ -211,3 +211,6 @@ function handleFileSelect(evt) {
 }
 
 document.getElementById('files').addEventListener('change', handleFileSelect, false);
+let contentContainer = document.getElementsByClassName("content-container");
+let offset = document.getElementsByTagName("footer")[0].offsetHeight;
+contentContainer[0].style.marginBottom = (offset+2)+"px";

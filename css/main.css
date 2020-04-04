@@ -146,7 +146,7 @@ html,body{
 }
 #footer{
     width: 100vw;
-    position: absolute;
+    position: fixed;
     bottom: 0px;
 }
 footer{
@@ -156,6 +156,7 @@ footer{
     width: 100%;
     background-color: rgba(125, 125, 125, 0.8);
     bottom: 0;
+    padding: 8px;
 }
 footer a{
     color: rgb(51, 174, 255);

@@ -42,6 +42,8 @@
             type: 'pie',
             data: chartData,
             options: {
+            responsive: true,
+            maintainAspectRatio: false,
             title: {
                 display: true,
                 text: 'Chat distribution between '+users
