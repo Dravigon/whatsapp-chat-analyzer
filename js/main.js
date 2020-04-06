@@ -209,7 +209,6 @@ function handleFileSelect(evt) {
         reader.readAsText(f);
     }
 }
-
 document.getElementById('files').addEventListener('change', handleFileSelect, false);
 let contentContainer = document.getElementsByClassName("content-container");
 let offset = document.getElementsByTagName("footer")[0].offsetHeight;

@@ -39,6 +39,9 @@ export const drawChatFrequency = (canvasId, chatData) => {
                     labelString: 'day / month / Year',
                 }]
 
+            },
+            plugins: {
+                datalabels: false
             }
         }
     });

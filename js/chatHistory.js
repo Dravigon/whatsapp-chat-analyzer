@@ -39,6 +39,9 @@ export const drawChatHistory = (canvasId, chatData) => {
                     labelString: 'Day / Month / Year',
                 }]
 
+            },
+            plugins: {
+                datalabels: false
             }
         }
     });
