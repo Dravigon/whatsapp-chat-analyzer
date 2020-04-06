@@ -113,6 +113,7 @@ export const downloadAllCanvas = () => {
 
     var ctx = canvas.getContext('2d');
     ctx.fillStyle = "rgb(51, 174, 255)";
+    ctx.fillRect(0, 0,canvas.width,canvas.height);
     ctx.fill();
     document.body.appendChild(canvas);
     printDiv(nodeList, nodeList.length - 1, canvas, loadingDiv);
