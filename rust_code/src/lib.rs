@@ -20,7 +20,7 @@ use wasm_bindgen::prelude::*;
 // to the input string. We are using .into(), to convert
 // the rust types of str to a String.
 // 
-const IGNORE_TEXTS: &str =r"(security code changed. Tap for more info|Messages to this chat and calls are now secured with end|Messages to this group are now secured with end| created group | added | removed |changed to|changed this group|Tap to|now an admin|left$|<Media omitted>).*$"; 
+const IGNORE_TEXTS: &str =r"(security code changed. Tap for more info|Messages to this chat and calls are now secured with end|Messages to this group are now secured with end| created group | added | removed |changed to|changed this group| changed the subject from |Tap to|now an admin|left$|<Media omitted>).*$"; 
 const DATE_FORMAT:&str = r"^((\d{2}|\d{1})/(\d{2}|\d{1})/(\d{2}|\d{4}), (\d{2}|\d{1}):\d{2}).*$";
 #[wasm_bindgen]
 pub fn add_wasm_by_example_to_string(input_string: String) -> String {
