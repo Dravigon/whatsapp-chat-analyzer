@@ -117,11 +117,11 @@ function handleFileSelect(evt) {
                     height: "500",
                     width: "600"
                 });
-                const chatHistoryDescription = "This gives the total number of words typed by a person per day over the time period of the chat (Provides you with the detail of amounts of words excahged over time)";
+                const chatHistoryDescription = "This gives the total number of convos typed by per month over the time period of the chat (Provides you with the detail of amounts of words excahged over time)";
                 createButton("Chat History", chatHistoryDescription,
                     function (canvasId) {
 
-                        const regexp = /^(.*\d)\ \-\ (.|\n)*?/gm;
+                        const regexp = /(\d{1,2}\/\d{1,2}\/\d{2},\s\d{1,2}:\d{2}\s-\s([^:]*)?:\s(.*)?)(?=\n\d{1,2}\/\d{1,2}\/\d{2},\s\d{1,2}:\d{2}\s-\s[^:]+:|$)/gm
                         const messages = data.matchAll(regexp);
                         drawChatHistory(canvasId, messages);
                         document.getElementById("loading-" + canvasId).style.display = 'none'
