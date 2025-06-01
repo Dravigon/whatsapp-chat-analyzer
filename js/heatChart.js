@@ -1,157 +1,95 @@
-function getColourList(maxVal, minVal) {
-  var green = 255; //i.e. FF
-  var red = 0;
-  var stepSize = 510 / (maxVal - minVal); //how many colors do you want?
-  var colourArray = [];
-  while (red < 255) {
-    red += stepSize;
-    if (red > 255) {
-      red = 255;
-    }
-    //rgb(200, 0, 0)
-    colourArray.push("rgb(" + red + "," + green + "," + 0 + ")"); //assume output is function that takes RGB
-  }
-  while (green > 0) {
-    green -= stepSize;
-    if (green < 0) {
-      green = 0;
-    }
-    colourArray.push("rgb(" + red + "," + green + "," + 0 + ")"); //assume output is function that takes RGB
-  }
-  return {
-    stepSize: stepSize,
-    colourList: colourArray,
-    minVal: minVal
-  };
-}
-function drawLegends(
-  canvas,
-  xPadding,
-  size,
-  xOrigin,
-  xStepSize,
-  yStepSize,
-  spacing,
-  colourDetails,
-  minValue,
-  maxValue,
-  xSize
-) {
-  var endX = (xStepSize + spacing) * size + xPadding;
-  var startX = xPadding;
-  var ctx = canvas.getContext("2d");
 
-  var currentPos = (xStepSize + spacing) * xSize - xPadding - xOrigin;
 
-  ctx.fillStyle = "rgb(0, 0, 0)";
-  ctx.textAlign = "center";
-  ctx.save();
-  ctx.translate(100, 300);
-  ctx.rotate(-0.5 * Math.PI);
-  ctx.fillText(
-    minValue + " chats",
-    ((xStepSize + spacing) * xSize) / 2 - 20,
-    currentPos - xPadding - xOrigin - 2
-  );
-  ctx.fillText(
-    maxValue + " chats",
-    ((xStepSize + spacing) * xSize) / 2 - 20,
-    currentPos -
-      xPadding -
-      xOrigin +
-      ((size * xStepSize * 0.85) / colourDetails.colourList.length) * maxValue +
-      10
-  );
-  ctx.restore();
-  xStepSize = (size * xStepSize * 0.85) / colourDetails.colourList.length;
-  ctx.fillText(
-    "Legend (Chats per hour)",
-    (maxValue * xStepSize) / 2 + currentPos,
-    10
-  );
+function drawHeatChart(canvasId, messages) {
 
-  for (var i = minValue; i <= maxValue; i++) {
-    ctx.fillStyle = colourDetails.colourList[i - minValue];
-    ctx.fillRect(currentPos, 20, xStepSize, yStepSize - 20);
-    currentPos += xStepSize;
-  }
-}
-function drawRow(
-  canvas,
-  xPadding,
-  spacing,
-  rowName,
-  values,
-  colourDetails,
-  xStepSize,
-  yStepSize,
-  y
-) {
-  var ctx = canvas.getContext("2d");
-  ctx.fillStyle = "rgb(200, 0, 0)";
-  ctx.textAlign = "center";
-  ctx.fillText(rowName, xPadding / 2, y + yStepSize / 2);
-  var currentPos = xPadding;
-  for (var val of values) {
-    ctx.fillStyle = colourDetails.colourList[val - colourDetails.minVal - 1];
-    ctx.fillRect(currentPos, y, xStepSize, yStepSize);
-    currentPos += xStepSize + spacing;
-  }
-}
+  const matrix = Array(7).fill(null).map(() => Array(24).fill(0));
 
-export const drawHeatChart = (canvasId,data) => {
-  var values = Object.values(data.values);
-  var keys = Object.keys(data.values);
-  var maxVal = values.reduce(function(accumum, val) {
-    return Math.max(accumum || Math.max(...val), Math.max(...val));
-  }, 0);
-  var minVal = values.reduce(function(accumum, val) {
-    return Math.min(accumum || 0, Math.min(...val));
-  }, 0);
-  var colourDetails = getColourList(maxVal, minVal);
-  var canvas = document.getElementById(canvasId);
-  var xPadding = 50;
-  var yPadding = 100;
-  var spacing = 1;
-  var stepSize = (canvas.width - xPadding) / values[0].length - spacing;
-  var yStepSize =
-    (canvas.height - yPadding) / keys.length - keys.length * spacing;
-  var currentPos = xPadding + stepSize / 2;
-  drawLegends(
-    canvas,
-    xPadding,
-    keys.length,
-    xPadding,
-    stepSize,
-    yStepSize,
-    spacing,
-    colourDetails,
-    minVal,
-    maxVal,
-    values[0].length
-  );
-  for (var val of data.periods) {
-    if (canvas.getContext) {
-      var ctx = canvas.getContext("2d");
-      ctx.fillStyle = "rgb(200, 0, 0)";
-      ctx.textAlign = "center";
-      ctx.fillText(val, currentPos, yPadding - 10);
-      currentPos += stepSize + spacing;
+  messages.forEach(([ts]) => {
+    const m = moment(ts);
+    const weekday = m.isoWeekday() % 7; // 0 = Sunday, 6 = Saturday
+    const hour = m.hour();
+    console.log({ weekday })
+    if (Number.isNaN(weekday))
+      return;
+    matrix[weekday][hour]++;
+  });
+
+  // Flatten into Chart.js matrix format
+  const data = [];
+  for (let day = 0; day < 7; day++) {
+    for (let hour = 0; hour < 24; hour++) {
+      data.push({
+        x: hour,
+        y: day,
+        v: matrix[day][hour],
+      });
     }
   }
-  var y = yPadding;
-  for (var row in data.values) {
-    drawRow(
-      canvas,
-      xPadding,
-      spacing,
-      row,
-      data.values[row],
-      colourDetails,
-      stepSize,
-      yStepSize,
-      y
-    );
-    y += yStepSize + spacing;
-  }
+
+
+  const ctx = document.getElementById(canvasId).getContext("2d");
+  const chart = new Chart(ctx, {
+    type: 'matrix',
+    data: {
+      datasets: [{
+        label: 'Messages',
+        data: data,
+        backgroundColor(ctx) {
+          const value = ctx.dataset.data[ctx.dataIndex].v;
+          const max = 5; // max expected messages per cell, adjust as needed
+          const t = Math.min(value / max, 1); // normalized 0 to 1
+
+          // Linear interpolate from yellow (255,255,0) to red (255,0,0)
+          const r = 255;
+          const g = Math.round(255 * (1 - t));
+          const b = 0;
+
+          return `rgb(${r},${g},${b})`;
+        },
+        width: ({ chart }) => (chart.chartArea || {}).width / 24 - 1,
+        height: ({ chart }) => (chart.chartArea || {}).height / 7 - 1,
+        borderWidth: 1,
+        borderColor: '#ccc',
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        tooltip: {
+          callbacks: {
+            title: d => `Hour: ${d[0].raw.x}, Day: ${['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d[0].raw.y]}`,
+            label: d => `Messages: ${d.raw.v}`
+          }
+        },
+        legend: { display: false },
+        title: {
+          display: true,
+          text: 'Chat Frequency Heatmap (Hour vs Weekday)'
+        }
+      },
+      scales: {
+        x: {
+          type: 'linear',
+          position: 'bottom',
+          min: 0,
+          max: 23,
+          ticks: { stepSize: 1 },
+          title: { display: true, text: 'Hour of Day' }
+        },
+        y: {
+          type: 'linear',
+          min: 0,
+          max: 6,
+          ticks: {
+            callback: val => ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][val],
+            stepSize: 1
+          },
+          title: { display: true, text: 'Day of Week' }
+        }
+      }
+    }
+  });
 }
+
+
+export { drawHeatChart }

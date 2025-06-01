@@ -1,103 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-       <title>Whatsapp Analyser - A tool to analyse whatsapp chat behaviour of induvidual chats and group chats</title>
-       <meta name="description" content="A web site application to analyse whatsapp chat data with chat privacy would help someone to analyse their relationship">
-      <link rel="stylesheet" href="./css/main.css">
-      <link rel="stylesheet" href="css/wordCloud.css">
-      <link rel="preload" href="./wasm/hello_world.js" type="script">
-      <script src="templates/Card/Card.js"></script>
-      <script src="templates/PopUpInput/PopUpInput.js"></script>
-      <meta name="viewport" content="width=device-width,initial-scale=1.0">
-                <script data-ad-client="ca-pub-4921848863460105" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-    </head> 
-    <body>
-        <div class="app-container">
-            <div class="title">
-                <h1 class="title-text">WHATSAPP CHAT ANALYZER</h1>
-                <div class="title-description">
-                    <p class="description">Export the whatsapp chat (Both induvidual chat and Group chat) to a txt file and upload here</br><b><u><a href="https://faq.whatsapp.com/en/android/23756533/?category=5245251" target="_blank">Please click here to know how to export a chat to text file</a></u></b></p>
-                <label >
+
+<head>
+    <meta charset="UTF-8">
+    <title>Whatsapp Analyser - A tool to analyse whatsapp chat behaviour of induvidual chats and group chats</title>
+    <meta name="description"
+        content="A web site application to analyse whatsapp chat data with chat privacy would help someone to analyse their relationship">
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="css/wordCloud.css">
+    <link rel="preload" href="./wasm/hello_world.js" type="script">
+    <script src="templates/Card/Card.js"></script>
+    <script src="templates/PopUpInput/PopUpInput.js"></script>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <script data-ad-client="ca-pub-4921848863460105" async
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+</head>
+
+<body>
+    <div class="app-container">
+        <div class="title">
+            <h1 class="title-text">WHATSAPP CHAT ANALYZER</h1>
+            <div class="title-description">
+                <p class="description">Export the whatsapp chat (Both induvidual chat and Group chat) to a txt file and
+                    upload here</br><b><u><a href="https://faq.whatsapp.com/en/android/23756533/?category=5245251"
+                                target="_blank">Please click here to know how to export a chat to text file</a></u></b>
+                </p>
+                <label>
                     <span id="choose-file-text">Click here to load a new chat file</span>
-                    <input type="file" id="files" name="files[]"/>
+                    <input type="file" id="files" name="files[]" />
                 </label>
-                    <p class="description"><b><span>Note:</span></b></br>This does not send the files to any external server for analysis
-                        <b>ALL ANALYSIS OCCURS ON THE USER'S BROWSER</b></br>
-                        This APP maintains <b>User Confidentiality</b> and none of user's personal data would be provided to <u>any server</u></br>
-                        Most of the chat analysis are based on user's chat exchanges
+                <p class="description"><b><span>Note:</span></b></br>This does not send the files to any external server
+                    for analysis
+                    <b>ALL ANALYSIS OCCURS ON THE USER'S BROWSER</b></br>
+                    This APP maintains <b>User Confidentiality</b> and none of user's personal data would be provided to
+                    <u>any server</u></br>
+                    Most of the chat analysis are based on user's chat exchanges
                     </b>
-                    </p>
-                </div>
+                </p>
             </div>
-            <div class="content-container">
-                <div id="canvas-div"> </div>
-            </div>
-            <div id="myModal" class="modal">
-              <div class="modal-content">
+        </div>
+        <div class="content-container">
+            <div id="canvas-div"> </div>
+        </div>
+        <div id="myModal" class="modal">
+            <div class="modal-content">
                 <p class="model-title">Contribution Details<span class="close">&times;</span></p>
                 <div>
-                    <p>This is a opensource project and if feeling like contributing or want to take a look at the source code</p>
-                    <p>then please take a look at <a href="https://github.com/Dravigon/whatsapp-chat-analyzer" target="_blank">whatsapp-chat-analyzer</a></p>
+                    <p>This is a opensource project and if feeling like contributing or want to take a look at the
+                        source code</p>
+                    <p>then please take a look at <a href="https://github.com/Dravigon/whatsapp-chat-analyzer"
+                            target="_blank">whatsapp-chat-analyzer</a></p>
                     <p>Hosting this page was made possible by Github&copy;</p>
                     <p>Please Support this project so many projects like this would be possible</p>
                     <p>Hope this helped you sort out your Relationship interactions</p>
                 </div>
-              </div>
-            </div>
-
-            <div id="footer">
-                <footer>Made with ❤️ by <a href="https://profile.dravid.dev/" target="_blank">Dravid</a>&nbsp;😉&nbsp;to know more about this project <a onclick="showProjectInfo()">click here</a></footer>
             </div>
         </div>
-        <script>
-            // Get the modal
-            var modal = document.getElementById("myModal");
 
-            // Get the button that opens the modal
+        <div id="footer">
+            <footer>Made with ❤️ by <a href="https://profile.dravid.dev/" target="_blank">Dravid</a>&nbsp;😉&nbsp;to
+                know more about this project <a onclick="showProjectInfo()">click here</a></footer>
+        </div>
+    </div>
+    <script>
+        // Get the modal
+        var modal = document.getElementById("myModal");
 
-            // Get the <span> element that closes the modal
-            var span = document.getElementsByClassName("close")[0];
+        // Get the button that opens the modal
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
 
 
-            // When the user clicks on <span> (x), close the modal
-            span.onclick = function() {
-                 modal.style.display = "none";
-             }
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
 
-            // When the user clicks anywhere outside of the modal, close it
-            window.onclick = function(event) {
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function (event) {
             if (event.target == modal) {
                 modal.style.display = "none";
-              }
             }
-            function showProjectInfo(){
-                ga('send', 'event', 'Project Details', 'click', 'intrest');
-                modal.style.display = "block";
-            }
+        }
+        function showProjectInfo() {
+            ga('send', 'event', 'Project Details', 'click', 'intrest');
+            modal.style.display = "block";
+        }
 
-        </script>
+    </script>
 
-        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js" integrity="sha256-R4pqcOYV8lt7snxMQO/HSbVCFRPMdrhAFMH+vr9giYI=" crossorigin="anonymous"></script>
-        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.4.0/dist/chartjs-plugin-datalabels.min.js"></script>
-        <script src="index.js" type="module"></script>
-        <script src="./js/whatsappCharts.js" type="module"></script>
-        <script src="js/wordCloud.js" type="module"></script>
-        <script src="js/main.js" type="module"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
-        <!-- Go to www.addthis.com/dashboard to customize your tools -->
-        <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5e889057ae231f3d"></script>
-        <!-- Go to www.addthis.com/dashboard to customize your tools --> 
-        <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5e889057ae231f3d"></script>
 
-        <!-- Google Analytics -->
-        <script>
-            window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-            ga('create', 'UA-162033104-1', 'auto');
-            ga('send', 'pageview');
-        </script>
-        <script async src='https://www.google-analytics.com/analytics.js'></script>
-        <!-- End Google Analytics -->
-        <!--- disable chatjs lable globally -->
-    </body>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
+    <script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.4.0/dist/chartjs-plugin-datalabels.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-matrix@2.0.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wordcloud2.js/1.1.2/wordcloud2.min.js"></script>
+
+    <script src="index.js" type="module"></script>
+    <script src="./js/whatsappCharts.js" type="module"></script>
+    <script src="js/wordCloud.js" type="module"></script>
+    <script src="js/main.js" type="module"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
+    <!-- Go to www.addthis.com/dashboard to customize your tools -->
+    <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5e889057ae231f3d"></script>
+    <!-- Go to www.addthis.com/dashboard to customize your tools -->
+    <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5e889057ae231f3d"></script>
+
+    <!-- Google Analytics -->
+    <script>
+        window.ga = window.ga || function () { (ga.q = ga.q || []).push(arguments) }; ga.l = +new Date;
+        ga('create', 'UA-162033104-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+    <script async src='https://www.google-analytics.com/analytics.js'></script>
+    <!-- End Google Analytics -->
+    <!--- disable chatjs lable globally -->
+</body>
+
 </html>
