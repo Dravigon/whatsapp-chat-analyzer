@@ -1,7 +1,10 @@
 
 // Round timestamps based on selected interval
 function roundTimestamp(timestamp, interval) {
-    const m = moment(timestamp);
+    let m = moment(timestamp);
+    if (!m.isValid()) {
+      m = moment(timestamp, "DD/MM/YY, hh:mm:ss A");
+    }
     if (interval === 'minute') return m.seconds(0).milliseconds(0).format("YYYY-MM-DD HH:mm");
     if (interval === 'hour') return m.minutes(0).seconds(0).milliseconds(0).format("YYYY-MM-DD HH");
     if (interval === 'day') return m.hours(0).minutes(0).seconds(0).milliseconds(0).format("YYYY-MM-DD");
@@ -13,7 +16,7 @@ function getFrequencyData(messages, interval) {
     const freq = {};
     let currentTimeStamp = "";
     messages.forEach((data) => {
-        let timestamp = data[0].match(/(.*\d)\ \-\ .*?:/)[1]
+        let timestamp = data[0].match(/(.*\d)\ \-\ .*?:/)?.[1]||data[1]
         //   console.log({data})
         const key = roundTimestamp(timestamp, interval);
         if (currentTimeStamp !== key) {

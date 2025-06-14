@@ -1,11 +1,57 @@
 
 
+
+function createRandomColorGenerator() {
+  // Generate a pool of colors first
+  let colorPool = [];
+
+  // Helper to generate a random HEX color
+  function getRandomHexColor() {
+    return '#' + Math.random().toString(16).substring(2, 8);
+  }
+
+  // Fill pool with colors
+  for (let i = 0; i < 100; i++) {
+    colorPool.push(getRandomHexColor()); 
+  }
+
+  // Shuffle pool (Fisher–Yates algorithm)
+  for (let i = colorPool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+
+    [colorPool[i], colorPool[j]] = [colorPool[j], colorPool[i]];
+  }
+
+  return function getColor() {
+    if (colorPool.length === 0) {
+      // Refill or reshuffle
+      for (let i = 0; i < 100; i++) {
+        colorPool.push(getRandomHexColor()); 
+      }
+      for (let i = colorPool.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+
+        [colorPool[i], colorPool[j]] = [colorPool[j], colorPool[i]];
+      }
+    }
+    return colorPool.pop();
+  };
+}
+
+const getRandomColor = createRandomColorGenerator();
+
 function drawHeatChart(canvasId, messages) {
 
   const matrix = Array(7).fill(null).map(() => Array(24).fill(0));
 
-  messages.forEach(([ts]) => {
-    const m = moment(ts);
+  messages.forEach((data) => {
+
+    let timestamp = data[0].match(/(.*\d)\ \-\ .*?:/)?.[1]||data[1]
+
+    let m = moment(timestamp);
+    if (!m.isValid()) {
+      m = moment(timestamp, "DD/MM/YY, hh:mm:ss A");
+    }
     const weekday = m.isoWeekday() % 7; // 0 = Sunday, 6 = Saturday
     const hour = m.hour();
     console.log({ weekday })
@@ -48,7 +94,7 @@ function drawHeatChart(canvasId, messages) {
         },
         width: ({ chart }) => (chart.chartArea || {}).width / 24 - 1,
         height: ({ chart }) => (chart.chartArea || {}).height / 7 - 1,
-        borderWidth: 1,
+        borderWidth: 0.1,
         borderColor: '#ccc',
       }]
     },

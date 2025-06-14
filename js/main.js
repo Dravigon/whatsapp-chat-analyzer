@@ -86,8 +86,15 @@ function handleFileSelect(evt) {
                 createButton("Conversation distribution", convoDistDescription, function (canvasId) {
 
 
-                    let regex = /(\d{1,2}\/\d{1,2}\/\d{2},\s\d{1,2}:\d{2}\s-\s([^:]*)?:\s(.*)?)(?=\n\d{1,2}\/\d{1,2}\/\d{2},\s\d{1,2}:\d{2}\s-\s[^:]+:|$)/gm
-                    let messages = data.matchAll(regex);
+                    let regexp = /(\d{1,2}\/\d{1,2}\/\d{2},\s\d{1,2}:\d{2}\s-\s([^:]*)?:\s(.*)?)(?=\n\d{1,2}\/\d{1,2}\/\d{2},\s\d{1,2}:\d{2}\s-\s[^:]+:|$)/gm
+                    const altRegex = /\[(\d{2}\/\d{2}\/\d{2}, \d{1,2}:\d{2}:\d{2} [AP]M)\] ~(.*): (.*)/gm
+
+
+                    let messages = Array.from(data.matchAll(regexp));
+                    if (!messages.length) {
+                        messages = Array.from(data.matchAll(altRegex))
+                    }
+
                     drawChatContribution(canvasId, messages);
                     document.getElementById("loading-" + canvasId).style.display = 'none'
 
@@ -95,8 +102,15 @@ function handleFileSelect(evt) {
                 const wordUsageDescription = "This gives the top most used words displayed bigged if most used, common words like i,am,he...etc., are ignored. To ignore some words specific for your chat please change the ignore list and click Repaint";
                 createButton("Word Usage", wordUsageDescription, function (canvasId) {
 
-                    let messages = data.replaceAll(/(.*\d)\ \-\ .*?:/gm, " ");
-                    console.log(messages)
+                    let regexp = /(\d{1,2}\/\d{1,2}\/\d{2},\s\d{1,2}:\d{2}\s-\s([^:]*)?:\s(.*)?)(?=\n\d{1,2}\/\d{1,2}\/\d{2},\s\d{1,2}:\d{2}\s-\s[^:]+:|$)/gm
+                    const altRegex = /\[(\d{2}\/\d{2}\/\d{2}, \d{1,2}:\d{2}:\d{2} [AP]M)\] ~(.*):/gm
+
+                    let messages = Array.from(data.matchAll(regexp));
+                    if (!messages.length) {
+                        messages = data.replaceAll(altRegex,"")
+                    } else {
+                        messages = data.replaceAll(regexp,"")
+                    }
                     drawWordCloud(canvasId, messages);
                     document.getElementById("loading-" + canvasId).style.display = 'none'
                 }, "", "", {
@@ -106,8 +120,14 @@ function handleFileSelect(evt) {
                 const heatChartDescription = "This gives average chat activity time during every hour for every week day (This shows when the user/group was actively intracting with other user(s))";
                 createButton("Heat Chart", heatChartDescription,
                     function (canvasId) {
-                        const regexp = /^(.*\d)\ \-\ (.|\n)*?/gm;
-                        const messages = data.matchAll(regexp);
+                        let regexp = /(\d{1,2}\/\d{1,2}\/\d{2},\s\d{1,2}:\d{2}\s-\s([^:]*)?:\s(.*)?)(?=\n\d{1,2}\/\d{1,2}\/\d{2},\s\d{1,2}:\d{2}\s-\s[^:]+:|$)/gm
+                        const altRegex = /\[(\d{2}\/\d{2}\/\d{2}, \d{1,2}:\d{2}:\d{2} [AP]M)\] ~(.*): (.*)/gm
+
+
+                        let messages = Array.from(data.matchAll(regexp));
+                        if (!messages.length) {
+                            messages = Array.from(data.matchAll(altRegex))
+                        }
                         console.log({ messages })
                         drawHeatChart(canvasId, messages);
                         document.getElementById("loading-" + canvasId).style.display = 'none'
@@ -122,8 +142,17 @@ function handleFileSelect(evt) {
                     function (canvasId) {
 
                         const regexp = /(\d{1,2}\/\d{1,2}\/\d{2},\s\d{1,2}:\d{2}\s-\s([^:]*)?:\s(.*)?)(?=\n\d{1,2}\/\d{1,2}\/\d{2},\s\d{1,2}:\d{2}\s-\s[^:]+:|$)/gm
-                        const messages = data.matchAll(regexp);
-                        drawChatHistory(canvasId, messages);
+                        const altRegex = /\[(\d{2}\/\d{2}\/\d{2}, \d{1,2}:\d{2}:\d{2} [AP]M)\] ~(.*): (.*)/gm
+                        let messages = Array.from(data.matchAll(regexp));
+                        if (messages.length > 0) {
+                            drawChatHistory(canvasId, messages);
+                        }
+                        else {
+                            messages = Array.from(data.matchAll(altRegex))
+                            drawChatHistory(canvasId, messages);
+                        }
+
+
                         document.getElementById("loading-" + canvasId).style.display = 'none'
 
 
@@ -135,8 +164,13 @@ function handleFileSelect(evt) {
                 createButton("Chat Intrest", chatIntrestHistoryDescription,
                     function (canvasId) {
                         let regexp = /(\d{1,2}\/\d{1,2}\/\d{2},\s\d{1,2}:\d{2}\s-\s([^:]*)?:\s(.*)?)(?=\n\d{1,2}\/\d{1,2}\/\d{2},\s\d{1,2}:\d{2}\s-\s[^:]+:|$)/gm
+                        const altRegex = /\[(\d{2}\/\d{2}\/\d{2}, \d{1,2}:\d{2}:\d{2} [AP]M)\] ~(.*): (.*)/gm
 
-                        const messages = data.matchAll(regexp);
+
+                        let messages = Array.from(data.matchAll(regexp));
+                        if (!messages.length) {
+                            messages = Array.from(data.matchAll(altRegex))
+                        }
                         console.log({ messages })
                         drawChatFrequency(canvasId, messages);
                         document.getElementById("loading-" + canvasId).style.display = 'none'
