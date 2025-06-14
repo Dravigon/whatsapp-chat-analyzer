@@ -194,25 +194,25 @@ function handleFileSelect(evt) {
                 let downloadButton = document.createElement('button');
                 downloadButton.innerHTML = "Download Analysed Data";
                 let reccomendationText = document.createElement('p');
-                reccomendationText.innerText = "Your feed backs are valuble please let us know what you would want to see or change";
-                let recommendationMessage = document.createElement('textarea');
-                recommendationMessage.id = "feedback";
-                recommendationMessage.style.verticalAlign = "middle";
-                let reccomendationButton = document.createElement('button');
-                reccomendationButton.innerHTML = "Send FeedBack";
+                reccomendationText.innerText = "Your feed backs are valuble please let us know what you would want to see or change \n please text me in whatsapp 8939373312";
+                // let recommendationMessage = document.createElement('textarea');
+                // recommendationMessage.id = "feedback";
+                // recommendationMessage.style.verticalAlign = "middle";
+                // let reccomendationButton = document.createElement('button');
+                // reccomendationButton.innerHTML = "Send FeedBack";
                 downloadButton.innerHTML = "Download Analysed Data";
                 document.getElementById("psuedo-container-download-data").appendChild(downloadButton);
                 document.getElementById("psuedo-container-download-data").appendChild(reccomendationText);
-                document.getElementById("psuedo-container-download-data").appendChild(recommendationMessage);
-                document.getElementById("psuedo-container-download-data").appendChild(reccomendationButton);
+                // document.getElementById("psuedo-container-download-data").appendChild(recommendationMessage);
+                // document.getElementById("psuedo-container-download-data").appendChild(reccomendationButton);
                 downloadButton.onclick = (e) => {
                     ga('send', 'event', 'Download Analysis', 'click', 'download');
                     downloadAllCanvas()
                 }
-                reccomendationButton.onclick = (e) => {
-                    let feedbackText = document.getElementById('feedback');
-                    ga('send', 'event', 'FeedBack', 'click', 'feedback-data', feedbackText.value);
-                }
+                // reccomendationButton.onclick = (e) => {
+                //     let feedbackText = document.getElementById('feedback');
+                //     ga('send', 'event', 'FeedBack', 'click', 'feedback-data', feedbackText.value);
+                // }
             }
         };
         reader.readAsText(f);
